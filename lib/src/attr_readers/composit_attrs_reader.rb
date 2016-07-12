@@ -2,6 +2,9 @@ class CompositAttrsReader
   def initialize
     @price_reader = PriceAttrReader.new
     @where_used_reader = WhereUsedAttrReader.new
+    @decriptor = CustomerInfoDecypher.new
+    @group_prices_map = {'11' => 'E'}
+
   end
 
   def get_prices ids
@@ -37,5 +40,29 @@ class CompositAttrsReader
     response = {}
     response[:where_used]= add_standard_attrs_2_wu(@where_used_reader.get_attribute(sku))
     response
+  end
+
+  def adjuct_group_price where_useds, group_id
+    where_useds.each do |key,value|
+      unless  value[:prices].nil?
+        where_useds[key][:prices] = value[:prices][group_id]
+      end
+    end
+  end
+
+  def remove_price where_useds
+    where_useds.each do |key,value|
+      where_useds[key][:prices] = nil
+    end
+  end
+
+  def get_where_used_attribute sku, id
+    group_id = @decriptor.get_customer_group id
+    wus = add_standard_attrs_2_wu(@where_used_reader.get_attribute(sku))
+    if group_id.nil?
+      remove_price wus
+    else
+      adjuct_group_price wus, @group_prices_map[group_id]
+    end
   end
 end

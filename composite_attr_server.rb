@@ -18,3 +18,9 @@ get '/product/:sku' do
   response = settings.compose_attr_reader.get_all_composite_attrs params[:sku]
   response.to_json
 end
+
+
+get '/product/:sku/group/:group_id' do
+  response = settings.compose_attr_reader.get_where_used_attribute params[:sku]
+  response.to_json
+end

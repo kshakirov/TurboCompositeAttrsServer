@@ -43,23 +43,27 @@ class CompositAttrsReader
   end
 
   def adjuct_group_price where_useds, group_id
-    where_useds.each do |key,value|
-      unless  value[:prices].nil?
-        where_useds[key][:prices] = value[:prices][group_id]
+    unless where_useds.nil?
+      where_useds.each do |key, value|
+        unless value[:prices].nil?
+          where_useds[key][:prices] = value[:prices][group_id]
+        end
       end
     end
   end
 
   def remove_price where_useds
-    where_useds.each do |key,value|
-      where_useds[key][:prices] = nil
+    unless where_useds.nil?
+      where_useds.each do |key, value|
+        where_useds[key][:prices] = 'login'
+      end
     end
   end
 
   def get_where_used_attribute sku, id
     group_id = @decriptor.get_customer_group id
     wus = add_standard_attrs_2_wu(@where_used_reader.get_attribute(sku))
-    if group_id.nil?
+    if group_id=='no stats'
       remove_price wus
     else
       adjuct_group_price wus, @group_prices_map[group_id]

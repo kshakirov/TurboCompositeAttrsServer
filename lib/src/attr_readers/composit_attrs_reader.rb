@@ -3,6 +3,7 @@ class CompositAttrsReader
     @price_reader = PriceAttrReader.new
     @where_used_reader = WhereUsedAttrReader.new
     @decriptor = CustomerInfoDecypher.new
+    @bom_reader = BillOfMaterialsAttrReader.new
     @group_prices_map = {'11' => 'E'}
 
   end

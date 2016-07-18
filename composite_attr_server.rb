@@ -29,3 +29,9 @@ get '/product/:sku/bom/:group_id' do
   response = settings.compose_attr_reader.get_bom_attribute params[:sku], params[:group_id]
   response.to_json
 end
+
+
+get '/product/:sku/interchanges/:group_id' do
+  response = settings.compose_attr_reader.get_interchange_attribute params[:sku], params[:group_id]
+  response.to_json
+end

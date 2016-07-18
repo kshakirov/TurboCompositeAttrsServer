@@ -62,3 +62,18 @@ class BearingSpacer < ActiveRecord::Base
   has_one :part, class_name: "Part",
           foreign_key: 'id'
 end
+
+class Salesnote < ActiveRecord::Base
+  self.table_name = "sales_note"
+  def self.recently_commented
+    self.find(:all,:conditions => [ 'write_date  > ?', Time.now - 5.years] )
+  end
+end
+
+class Salesnotepart < ActiveRecord::Base
+  #has_ :salesnote, class_name: "Salesnote",
+  #        foreign_key: "sales_note_id"
+  #self.primary_keys = :sales_note_id, :part_id
+  self.table_name = "sales_note_part"
+end
+

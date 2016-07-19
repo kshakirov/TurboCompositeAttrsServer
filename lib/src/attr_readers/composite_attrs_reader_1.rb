@@ -21,7 +21,7 @@ class CompositAttrsReader
   end
 
 
-  def get_bom_attribute sku, id
+  def get_bom_attribute sku, id=''
     group_id = @decriptor.get_customer_group id
     boms = @bom_reader.get_attribute sku
     add_standard_attrs_2_bom boms

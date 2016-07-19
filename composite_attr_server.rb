@@ -41,3 +41,9 @@ get '/product/:sku/sales_notes/' do
   response = settings.compose_attr_reader.get_sales_notes params[:sku]
   response.to_json
 end
+
+
+get '/product/:sku/kit_matrix/' do
+  response = settings.compose_attr_reader.get_kit_matrix params[:sku]
+  response.to_json
+end

@@ -14,22 +14,22 @@ class TestCompositeAttrsReader < MiniTest::Unit::TestCase
   #   attrs = @stdreader.get_bom_attribute 6392, 'sVrXIqos994v0pkehHI28Q=='
   #   p attrs
   # end
-  #
-  #
-  # def test_interchanges
+
+
+  def test_interchanges
+    @stdreader = CompositAttrsReader.new
+    attrs = @stdreader.get_interchange_attribute 6392, 'sVrXIqos994v0pkehHI28Q=='
+    p attrs
+    assert_equal 2, attrs.size
+    assert attrs[0].key? :description
+  end
+
+  # def test_kit_matrix
   #   @stdreader = CompositAttrsReader.new
-  #   attrs = @stdreader.get_interchange_attribute 6392, 'sVrXIqos994v0pkehHI28Q=='
+  #   attrs = @stdreader.get_kit_matrix 63194
   #   p attrs
   #   assert_equal 2, attrs.size
   #   assert attrs[0].key? :description
   # end
-
-  def test_kit_matrix
-    @stdreader = CompositAttrsReader.new
-    attrs = @stdreader.get_kit_matrix 63194
-    p attrs
-    #assert_equal 2, attrs.size
-    #assert attrs[0].key? :description
-  end
 
 end

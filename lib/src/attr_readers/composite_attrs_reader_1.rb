@@ -1,5 +1,20 @@
 class CompositAttrsReader
 
+
+  def add_ti_part_number ti_sku
+    ti_part_numbers = []
+    if ti_sku.size > 0
+      ti_sku.each do |sku|
+        if sku
+          part = Part.find sku
+          ti_part_numbers.push(part.manfr_part_num)
+        end
+      end
+    end
+    ti_part_numbers
+  end
+
+
   def add_standard_attrs_2_bom boms
     if not boms.nil?
       ids = []
@@ -9,6 +24,7 @@ class CompositAttrsReader
         boms[index][:description] = part.description
         boms[index][:part_type] = part.part_type.name
         boms[index][:part_number] = part.manfr_part_num
+        boms[index][:ti_part_number] = add_ti_part_number(boms[index][:ti_part_sku])
         boms[index][:name] = part.name || boms[index][:part_type] + '-' + boms[index][:part_number]
 
       end

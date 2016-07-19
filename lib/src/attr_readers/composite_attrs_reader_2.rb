@@ -8,6 +8,7 @@ class CompositAttrsReader
         part = Part.find interchange[:id]
         ids.push interchange[:id]
         interchanges[index][:description] = part.description
+        interchanges[index][:part_number] = part.manfr_part_num
       end
       #add_prices_to_response(boms, get_prices(ids))
       interchanges

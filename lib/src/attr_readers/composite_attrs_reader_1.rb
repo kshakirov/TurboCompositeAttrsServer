@@ -66,16 +66,29 @@ class CompositAttrsReader
   end
 
 
+  def get_cached_bom sku
+    response = @redis_cache.get_cached_response sku, 'bom'
+
+    if response
+      response
+    else
+      boms = add_standard_attrs_2_bom(@bom_reader.get_attribute sku)
+      @redis_cache.set_cached_response sku, 'bom', boms
+      boms
+    end
+  end
+
+
+
   def _get_bom_without_prices sku
-    boms = @bom_reader.get_attribute sku
-    add_standard_attrs_2_bom boms
+
+    get_cached_bom sku
   end
 
 
   def _get_bom_with_prices sku, id
     group_id = @decriptor.get_customer_group id
-    boms = @bom_reader.get_attribute sku
-    add_standard_attrs_2_bom boms
+    boms = get_cached_bom sku
     if group_id=='no stats'
       remove_bom_price boms
     else
@@ -90,4 +103,20 @@ class CompositAttrsReader
       _get_bom_with_prices sku, id
     end
   end
+
+  def filter_major_components_only boms
+    mcs = []
+    boms.each do |bom|
+      if bom[:part_type_parent] == 'major_component'
+        mcs.push bom
+      end
+    end
+    mcs
+  end
+
+  def get_major_component sku, id
+    boms = _get_bom_with_prices sku, id
+    filter_major_components_only boms
+  end
+
 end

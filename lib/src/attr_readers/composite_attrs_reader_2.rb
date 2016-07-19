@@ -19,10 +19,25 @@ class CompositAttrsReader
   end
 
 
+  def get_cached_intch sku
+    response = @redis_cache.get_cached_response sku, 'interchanges'
+
+    if response
+      response
+    else
+      interchanges = @interchange_reader.get_attribute sku
+      add_standard_attrs_2_interchs interchanges
+
+      @redis_cache.set_cached_response sku, 'interchanges', interchanges
+      interchanges
+    end
+  end
+
+
+
   def get_interchange_attribute sku, id
-    group_id = @decriptor.get_customer_group id
-    interchanges = @interchange_reader.get_attribute sku
-    add_standard_attrs_2_interchs interchanges
+    get_cached_intch sku
+
   end
 
 end

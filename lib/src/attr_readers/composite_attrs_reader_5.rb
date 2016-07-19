@@ -54,10 +54,26 @@ class CompositAttrsReader
 
   end
 
+
+  def get_cached_sk sku
+    response = @redis_cache.get_cached_response sku, 'service_kits'
+
+    if response
+      response
+    else
+      service_kits = @service_kits.get_attribute sku
+      add_standard_attrs_2_sk service_kits
+      @redis_cache.set_cached_response sku, 'service_kits', service_kits
+      service_kits
+    end
+  end
+
+
+
+
   def get_service_kits sku, id
     group_id = @decriptor.get_customer_group id
-    service_kits = @service_kits.get_attribute sku
-    add_standard_attrs_2_sk service_kits
+    service_kits = get_cached_sk sku
     if group_id=='no stats'
       remove_sk_price service_kits
     else

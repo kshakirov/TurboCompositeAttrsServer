@@ -1,5 +1,5 @@
 class CompositAttrsReader
-  def initialize
+  def initialize redis_cache=nil
     @price_reader = PriceAttrReader.new
     @where_used_reader = WhereUsedAttrReader.new
     @decriptor = CustomerInfoDecypher.new
@@ -9,6 +9,7 @@ class CompositAttrsReader
     @sales_note_reader =  SalesNoteAttrReader.new
     @kit_matrix = ServiceKitsAttrReader.new
     @service_kits = ServiceKitsAttrReader.new
+    @redis_cache = RedisCache.new(Redis.new(:host => "redis", :db => 3))
 
 
   end
@@ -66,9 +67,21 @@ class CompositAttrsReader
     end
   end
 
+  def get_cached_wu sku
+    response = @redis_cache.get_cached_response sku, 'where_used'
+
+    if response
+       response
+    else
+      wus = add_standard_attrs_2_wu(@where_used_reader.get_attribute(sku))
+      @redis_cache.set_cached_response sku, 'where_used', wus
+      wus
+    end
+  end
+
   def get_where_used_attribute sku, id
     group_id = @decriptor.get_customer_group id
-    wus = add_standard_attrs_2_wu(@where_used_reader.get_attribute(sku))
+    wus = get_cached_wu sku
     if group_id=='no stats'
       remove_price wus
     else

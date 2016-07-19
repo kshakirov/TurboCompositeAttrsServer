@@ -34,6 +34,9 @@ class CompositAttrsReader
   return kit_matrix_hash, _base_header_array.concat(kit_matrix_headers)
   end
 
+
+
+
   def _get_only_ti_boms sku
     boms = get_bom_attribute(sku, nil)
     ti_boms = []
@@ -73,8 +76,23 @@ class CompositAttrsReader
     _create_kit_matrix_table ti_kits
   end
 
+
+  def get_cached_km sku
+    response = @redis_cache.get_cached_response sku, 'kit_matrix'
+
+    if response
+      response
+    else
+      kms =  @kit_matrix.get_attribute sku
+      kms = _get_ti_kits kms
+      @redis_cache.set_cached_response sku, 'kit_matrix', kms
+      kms
+    end
+  end
+
+
+
   def get_kit_matrix sku
-    kits = @kit_matrix.get_attribute sku
-    _get_ti_kits kits
+   get_cached_km sku
   end
 end

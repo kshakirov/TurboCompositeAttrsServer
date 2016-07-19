@@ -3,12 +3,14 @@ require "sinatra/activerecord"
 require 'uri'
 require 'active_support/all'
 require 'rest-client'
+require 'redis'
 require_relative 'lib/server'
 
 set :bind, '0.0.0.0'
 set :port, 4571
 
 configure do
+
   set :compose_attr_reader, CompositAttrsReader.new
 end
 
@@ -50,6 +52,11 @@ end
 
 get '/product/:sku/service_kits/:group_id' do
   response = settings.compose_attr_reader.get_service_kits params[:sku], params[:group_id]
+  response.to_json
+end
+
+get '/product/:sku/major_components/:group_id' do
+  response = settings.compose_attr_reader.get_major_component params[:sku], params[:group_id]
   response.to_json
 end
 

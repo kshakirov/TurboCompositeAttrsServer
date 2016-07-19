@@ -32,4 +32,14 @@ class TestCompositeAttrsReader < MiniTest::Unit::TestCase
     assert attrs[0].key? :description
   end
 
+
+  def test_service_kits
+    @stdreader = CompositAttrsReader.new
+    attrs = @stdreader.get_service_kits 10513, 'sVrXIqos994v0pkehHI28Q=='
+    p attrs
+    assert_equal 2, attrs.size
+    assert attrs[0].key? :description
+  end
+
+
 end

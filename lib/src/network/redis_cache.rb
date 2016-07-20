@@ -6,6 +6,7 @@ class RedisCache
 
   def get_cached_response sku, attr
     key = sku.to_s + '_' + attr.to_s
+    begin
     response = @redis_client.get(key)
     if response
       if response != 'null'
@@ -14,6 +15,10 @@ class RedisCache
         nil
       end
     else
+      false
+    end
+    rescue Exception => e
+      puts "Problems with getting response for product [#{p.id}]"
       false
     end
   end

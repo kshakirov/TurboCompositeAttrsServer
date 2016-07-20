@@ -33,6 +33,7 @@ GEM
     mime-types (1.22)
     minitest (5.9.0)
     netrc (0.7.9)
+    puma (3.5.0-java)
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
@@ -63,6 +64,7 @@ DEPENDENCIES
   activerecord-jdbcmysql-adapter
   activesupport
   composite_primary_keys (> 8.0.0)
+  puma
   rake
   redis
   rest-client

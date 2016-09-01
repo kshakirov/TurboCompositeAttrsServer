@@ -1,6 +1,6 @@
 class CompositAttrsReader
   def initialize redis_cache=nil
-    @price_reader = PriceAttrReader.new
+
     @where_used_reader = WhereUsedAttrReader.new
     @decriptor = CustomerInfoDecypher.new
     @bom_reader = BillOfMaterialsAttrReader.new
@@ -10,6 +10,7 @@ class CompositAttrsReader
     @kit_matrix = ServiceKitsAttrReader.new
     @service_kits = ServiceKitsAttrReader.new
     @redis_cache = RedisCache.new(Redis.new(:host => "redis", :db => 3))
+    @price_reader = PriceAttrReader.new(@redis_cache)
 
 
   end

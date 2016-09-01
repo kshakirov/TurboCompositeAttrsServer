@@ -1,8 +1,8 @@
-class ProductCache
+class AttributesCacher
   def initialize
     @stdreader = CompositAttrsReader.new
   end
-  def get_cached_attributes sku
+  def put sku
     @stdreader.get_where_used_attribute sku, 'sVrXIqos994v0pkehHI28Q=='
     @stdreader.get_bom_attribute sku, 'sVrXIqos994v0pkehHI28Q=='
     @stdreader.get_interchange_attribute 6392, 'sVrXIqos994v0pkehHI28Q=='

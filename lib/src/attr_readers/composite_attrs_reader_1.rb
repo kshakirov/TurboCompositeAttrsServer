@@ -13,7 +13,7 @@ class CompositAttrsReader
 
   def remove_bom_price boms
     unless boms.nil?
-      boms.each_with_index do |value,index|
+      boms.each_with_index do |value, index|
         boms[index][:prices] = 'login'
       end
     end
@@ -34,7 +34,7 @@ class CompositAttrsReader
 
 
   def add_prices_to_bom_response boms, prices
-    boms.each_with_index  do |bom, index|
+    boms.each_with_index do |bom, index|
       prices.each do |price|
         if price['partId'] == bom[:sku]
           boms[index][:prices] = price['prices']
@@ -77,7 +77,6 @@ class CompositAttrsReader
       boms
     end
   end
-
 
 
   def _get_bom_without_prices sku

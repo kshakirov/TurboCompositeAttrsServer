@@ -6,11 +6,11 @@ class ProductsCollection
     ActiveRecord::Base.logger = nil
   end
 
-  def _process_products delegated_cacher, since_id=0
+  def _process_products since_id
     Part.find_each(batch_size: 100) do |p|
       if since_id and since_id < p.id
         puts "Adding Product [#{p.id}], name [#{p.manfr_part_num}]"
-        delegated_cacher.put p.id
+        @product_cacher.put p.id
       end
     end
   end
@@ -26,8 +26,8 @@ class ProductsCollection
     end
   end
 
-  def cache_all_attributes since_id=nil
-    _process_products @product_cacher, since_id
+  def cache_all_attributes since_id=0
+    _process_products  since_id
   end
 
   def cache_price_attribute

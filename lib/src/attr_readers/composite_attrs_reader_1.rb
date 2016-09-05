@@ -36,8 +36,8 @@ class CompositAttrsReader
   def add_prices_to_bom_response boms, prices
     boms.each_with_index do |bom, index|
       prices.each do |price|
-        if price['partId'] == bom[:sku]
-          boms[index][:prices] = price['prices']
+        if price[:partId] == bom[:sku]
+          boms[index][:prices] = price[:prices]
         end
       end
     end

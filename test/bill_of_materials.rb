@@ -11,6 +11,7 @@ class TestBomAttrsReader < MiniTest::Unit::TestCase
     assert_equal 'Interchange', result[0][:type]
     assert_equal false, result[0][:has_bom]
 
+
   end
 
 end

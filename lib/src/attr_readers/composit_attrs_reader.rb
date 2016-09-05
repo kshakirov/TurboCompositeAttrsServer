@@ -22,8 +22,8 @@ class CompositAttrsReader
   def add_prices_to_response response, prices
     response.each do |key, value|
       prices.each do |price|
-        if price['partId'] == key
-          response[key][:prices] = price['prices']
+        if price[:partId] == key
+          response[key][:prices] = price[:prices]
         end
       end
     end

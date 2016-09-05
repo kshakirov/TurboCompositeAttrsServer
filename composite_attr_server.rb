@@ -12,6 +12,7 @@ set :port, 4571
 configure do
 
   set :compose_attr_reader, CompositAttrsReader.new
+  set :where_used_reader, WhereUsedGetter.new
 end
 
 
@@ -23,7 +24,7 @@ end
 
 
 get '/product/:sku/where_used/:group_id' do
-  response = settings.compose_attr_reader.get_where_used_attribute params[:sku], params[:group_id]
+  response = settings.where_used_reader.get_where_used_attribute params[:sku], params[:group_id]
   response.to_json
 end
 

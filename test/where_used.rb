@@ -1,14 +1,20 @@
 require_relative "test_helper"
 
 class TestProductsAttrsReader < MiniTest::Unit::TestCase
-  def test_where_used
-    @reader = WhereUsedAttrReader.new
-    @stdreader = CompositAttrsReader.new
-    attrs = @reader.get_attribute 49639
-    @stdreader.add_standard_attrs_2_wu attrs
-    assert_equal  'Cartridge', attrs[4742][:partType]
-    assert_equal  'CHRA, CT10', attrs[6673][:description]
-    assert_equal  117.8, attrs[6673][:prices][:E]
+
+  # def test_where_used_setter
+  #   setter = WhereUsedSetter.new
+  #   setter.set_where_used_attribute 49639
+  #
+  # end
+
+  def test_where_used_getter
+    getter = WhereUsedGetter.new
+    attrs = getter.get_where_used_attribute  49639,  'sVrXIqos994v0pkehHI28Q=='
+    assert_equal  'Cartridge', attrs['4742'.to_sym][:partType]
+    assert_equal  'CHRA, CT10', attrs['6673'.to_sym][:description]
+    refute_nil attrs['6673'.to_sym][:prices]
+    assert_equal  117.8, attrs['6673'.to_sym][:prices]
 
   end
 

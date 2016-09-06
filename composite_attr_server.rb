@@ -15,6 +15,7 @@ configure do
   set :where_used_reader, WhereUsedGetter.new
   set :bom_reader, BomGetter.new
   set :interchange_reader, InterchangeGetter.new
+  set :kit_matrix_getter , KitMatrixGetter.new
 end
 
 
@@ -49,7 +50,7 @@ end
 
 
 get '/product/:sku/kit_matrix/' do
-  response = settings.compose_attr_reader.get_kit_matrix params[:sku]
+  response = settings.kit_matrix_getter.get_kit_matrix_attribute params[:sku]
   response.to_json
 end
 

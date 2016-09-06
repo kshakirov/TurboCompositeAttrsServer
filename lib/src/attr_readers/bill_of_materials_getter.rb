@@ -1,8 +1,8 @@
 class BomGetter
 
-  def initialize
+  def initialize redis_cache= RedisCache.new(Redis.new(:host => "redis", :db => 3))
     @group_prices_map = {'11' => 'E'}
-    @redis_cache = RedisCache.new(Redis.new(:host => "redis", :db => 3))
+    @redis_cache = redis_cache
     @decriptor = CustomerInfoDecypher.new
   end
 

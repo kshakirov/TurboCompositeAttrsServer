@@ -9,21 +9,13 @@ require_relative 'lib/server'
 set :bind, '0.0.0.0'
 set :port, 4571
 
-configure do
-
-  set :compose_attr_reader, CompositAttrsReader.new
-  set :where_used_reader, WhereUsedGetter.new
-  set :bom_reader, BomGetter.new
-  set :interchange_reader, InterchangeGetter.new
-  set :kit_matrix_getter , KitMatrixGetter.new
-end
-
-
-
-get '/product/:sku' do
-  response = settings.compose_attr_reader.get_all_composite_attrs params[:sku]
-  response.to_json
-end
+set :redis_client, RedisCache.new(Redis.new(:host => "redis", :db => 3))
+set :where_used_reader, WhereUsedGetter.new(settings.redis_client)
+set :bom_reader, BomGetter.new(settings.redis_client)
+set :interchange_reader, InterchangeGetter.new(settings.redis_client)
+set :kit_matrix_getter, KitMatrixGetter.new(settings.redis_client)
+set :service_kit_getter, ServiceKitGetter.new(settings.redis_client)
+set :sales_note_getter, SalesNoteGetter.new(settings.redis_client)
 
 
 get '/product/:sku/where_used/:group_id' do
@@ -44,7 +36,7 @@ end
 
 
 get '/product/:sku/sales_notes/' do
-  response = settings.compose_attr_reader.get_sales_notes params[:sku]
+  response = settings.sales_note_getter.get_sales_note_attribute params[:sku]
   response.to_json
 end
 
@@ -55,7 +47,7 @@ get '/product/:sku/kit_matrix/' do
 end
 
 get '/product/:sku/service_kits/:group_id' do
-  response = settings.compose_attr_reader.get_service_kit_attribute params[:sku], params[:group_id]
+  response = settings.service_kit_getter.get_service_kit_attribute params[:sku], params[:group_id]
   response.to_json
 end
 

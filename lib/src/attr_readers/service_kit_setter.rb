@@ -13,7 +13,7 @@ class ServiceKitSetter
   def add_prices_to_sk_response sks, prices
     sks.each_with_index do |sk, index|
       prices.each do |price|
-        if price[:partId] == sk[:sku]
+        if price and price[:partId] == sk[:sku]
           sks[index][:prices] = price[:prices]
         end
       end

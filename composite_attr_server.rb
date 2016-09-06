@@ -14,6 +14,7 @@ configure do
   set :compose_attr_reader, CompositAttrsReader.new
   set :where_used_reader, WhereUsedGetter.new
   set :bom_reader, BomGetter.new
+  set :interchange_reader, InterchangeGetter.new
 end
 
 
@@ -36,7 +37,7 @@ end
 
 
 get '/product/:sku/interchanges/:group_id' do
-  response = settings.compose_attr_reader.get_interchange_attribute params[:sku], params[:group_id]
+  response = settings.interchange_reader.get_interchange_attribute params[:sku]
   response.to_json
 end
 

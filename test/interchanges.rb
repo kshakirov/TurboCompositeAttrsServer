@@ -9,7 +9,7 @@ class TestInterchangeAttrsReader < MiniTest::Unit::TestCase
 
   def test_interchange_getter
     getter = InterchangeGetter.new
-    attrs = getter.get_interchange_attribute 6392, 'sVrXIqos994v0pkehHI28Q=='
+    attrs = getter.get_interchange_attribute 6392
     assert_equal 4, attrs.size
     assert_equal 1983, attrs[1][:id]
   end

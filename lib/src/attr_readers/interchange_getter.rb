@@ -8,7 +8,7 @@ class InterchangeGetter
     @redis_cache.get_cached_response sku, 'interchanges'
   end
 
-  def get_interchange_attribute sku, id
+  def get_interchange_attribute sku
     get_cached_interchange sku
 
   end

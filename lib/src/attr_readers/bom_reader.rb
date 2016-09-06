@@ -1,4 +1,4 @@
-class BillOfMaterialsAttrReader
+class BomReader
   def initialize
     @sql_template = ERB.new %q{
     SELECT DISTINCT

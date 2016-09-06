@@ -38,7 +38,7 @@ class CompositAttrsReader
 
 
   def _get_only_ti_boms sku
-    boms = get_bom_attribute(sku, nil)
+    boms = set_bom_attribute(sku, nil)
     ti_boms = []
     boms.each do |bom|
       if bom[:ti_part_sku].size > 0 and bom[:ti_part_sku][0].nil?

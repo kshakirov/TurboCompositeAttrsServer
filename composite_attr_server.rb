@@ -13,6 +13,7 @@ configure do
 
   set :compose_attr_reader, CompositAttrsReader.new
   set :where_used_reader, WhereUsedGetter.new
+  set :bom_reader, BomGetter.new
 end
 
 
@@ -29,7 +30,7 @@ get '/product/:sku/where_used/:group_id' do
 end
 
 get '/product/:sku/bom/:group_id' do
-  response = settings.compose_attr_reader.get_bom_attribute params[:sku], params[:group_id]
+  response = settings.bom_reader.get_bom_attribute params[:sku], params[:group_id]
   response.to_json
 end
 
@@ -57,7 +58,7 @@ get '/product/:sku/service_kits/:group_id' do
 end
 
 get '/product/:sku/major_components/:group_id' do
-  response = settings.compose_attr_reader.get_major_component params[:sku], params[:group_id]
+  response = settings.bom_reader.get_major_component params[:sku], params[:group_id]
   response.to_json
 end
 

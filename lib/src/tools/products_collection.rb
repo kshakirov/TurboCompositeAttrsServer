@@ -2,15 +2,15 @@ class ProductsCollection
   def initialize
     @product_cacher = AttributesCacher.new
     @price_cacher = PriceCacher.new
-    old_logger = ActiveRecord::Base.logger
+    @kit_matrix_cacher = KitMatrixCacher.new
     ActiveRecord::Base.logger = nil
   end
 
-  def _process_products since_id
+  def _process_products since_id, cacher
     Part.find_each(batch_size: 100) do |p|
       if since_id and since_id < p.id
         puts "Adding Product [#{p.id}], name [#{p.manfr_part_num}]"
-        @product_cacher.put p.id
+        cacher.put p.id
       end
     end
   end
@@ -27,7 +27,11 @@ class ProductsCollection
   end
 
   def cache_all_attributes since_id=0
-    _process_products  since_id
+    _process_products  since_id, @product_cacher
+  end
+
+  def cache_kit_matrix since_id=0
+    _process_products  since_id, @kit_matrix_cacher
   end
 
   def cache_price_attribute

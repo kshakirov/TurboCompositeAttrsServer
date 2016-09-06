@@ -8,7 +8,6 @@ require_relative 'lib/server'
 
 set :bind, '0.0.0.0'
 set :port, 4571
-
 set :redis_client, RedisCache.new(Redis.new(:host => "redis", :db => 3))
 set :where_used_reader, WhereUsedGetter.new(settings.redis_client)
 set :bom_reader, BomGetter.new(settings.redis_client)

@@ -8,7 +8,7 @@ class ProductsCollection
 
   def _process_products since_id, cacher
     Part.find_each(batch_size: 100) do |p|
-      if since_id and since_id  > p.id
+      if since_id and since_id  < p.id
         puts "Adding Product [#{p.id}], name [#{p.manfr_part_num}]"
         cacher.put p.id
       end

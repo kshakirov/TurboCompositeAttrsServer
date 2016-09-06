@@ -15,7 +15,7 @@ class ProductsCollection
     end
   end
 
-  def _process_products_in_batch since_id=0
+  def _process_products_in_batch since_id
     counter = 1
     Part.find_in_batches(start: since_id, batch_size: 100) do |group|
       ids = []
@@ -34,8 +34,8 @@ class ProductsCollection
     _process_products  since_id, @kit_matrix_cacher
   end
 
-  def cache_price_attribute
-    _process_products_in_batch
+  def cache_price_attribute since_id=0
+    _process_products_in_batch since_id
   end
 
 

@@ -4,7 +4,7 @@ class CompositAttrsReader
     @where_used_reader = WhereUsedAttrReader.new
     @decriptor = CustomerInfoDecypher.new
     @bom_reader = BomReader.new
-    @interchange_reader = InterchangeAttrReader.new
+    @interchange_reader = InterchangeReader.new
     @group_prices_map = {'11' => 'E'}
     @sales_note_reader =  SalesNoteAttrReader.new
     @kit_matrix = ServiceKitsAttrReader.new

@@ -1,4 +1,4 @@
-class InterchangeAttrReader
+class InterchangeReader
   def get_attribute id
     response = []
     ints = Vint.where(part_id: id)

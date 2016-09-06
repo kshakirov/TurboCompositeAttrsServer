@@ -1,9 +1,11 @@
 class BomGetter
+
   def initialize
     @group_prices_map = {'11' => 'E'}
     @redis_cache = RedisCache.new(Redis.new(:host => "redis", :db => 3))
     @decriptor = CustomerInfoDecypher.new
   end
+
   def add_group_price boms, group_id
     unless boms.nil?
       boms.each_with_index do |value, index|

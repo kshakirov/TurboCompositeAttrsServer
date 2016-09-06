@@ -55,7 +55,7 @@ get '/product/:sku/kit_matrix/' do
 end
 
 get '/product/:sku/service_kits/:group_id' do
-  response = settings.compose_attr_reader.get_service_kits params[:sku], params[:group_id]
+  response = settings.compose_attr_reader.get_service_kit_attribute params[:sku], params[:group_id]
   response.to_json
 end
 

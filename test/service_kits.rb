@@ -1,22 +1,16 @@
 require_relative "test_helper"
 
 class TestServiceKitsAttrsReader < MiniTest::Unit::TestCase
-  # def test_service_kits
-  #   @reader = ServiceKitsAttrReader.new
-  #   attrs = @reader.get_attribute 6392
-  #   assert_equal 29, attrs.size
-  #   result = attrs.select { |attr| attr[:sku] == 40272 }
-  #   assert_equal 1, result.size
-  #   assert_equal "200115-0000", result[0][:partNumber]
-  #
-  # end
+  def test_service_kit_setter
+    setter = ServiceKitSetter.new
+    setter.set_service_kit_attribute 13958
+  end
 
-  def test_service_kits_sp
-    @reader = ServiceKitsAttrReader.new
-    attrs = @reader.get_attribute 63194
-    p attrs
-
-
+  def test_service_kit_gettter
+    getter = ServiceKitGetter.new
+    attrs = getter.get_service_kit_attribute  13958,  'sVrXIqos994v0pkehHI28Q=='
+    assert_equal 49, attrs.size
+    assert_equal 42.68,   attrs.last[:prices]
   end
 
 end

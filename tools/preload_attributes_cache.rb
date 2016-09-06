@@ -1,4 +1,5 @@
 require_relative 'tools_helper'
 
 @products_collection = ProductsCollection.new
-@products_collection.cache_all_attributes
+since = ARGV[0].to_i || 0
+@products_collection.cache_all_attributes since

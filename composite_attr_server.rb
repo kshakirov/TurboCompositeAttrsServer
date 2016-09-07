@@ -17,18 +17,18 @@ set :service_kit_getter, ServiceKitGetter.new(settings.redis_client)
 set :sales_note_getter, SalesNoteGetter.new(settings.redis_client)
 
 
-get '/product/:sku/where_used/:group_id' do
-  response = settings.where_used_reader.get_where_used_attribute params[:sku], params[:group_id]
+get '/product/:sku/where_used/' do
+  response = settings.where_used_reader.get_where_used_attribute params[:sku], params[:stats]
   response.to_json
 end
 
-get '/product/:sku/bom/:group_id' do
-  response = settings.bom_reader.get_bom_attribute params[:sku], params[:group_id]
+get '/product/:sku/bom/' do
+  response = settings.bom_reader.get_bom_attribute params[:sku], params[:stats]
   response.to_json
 end
 
 
-get '/product/:sku/interchanges/:group_id' do
+get '/product/:sku/interchanges/' do
   response = settings.interchange_reader.get_interchange_attribute params[:sku]
   response.to_json
 end
@@ -45,13 +45,13 @@ get '/product/:sku/kit_matrix/' do
   response.to_json
 end
 
-get '/product/:sku/service_kits/:group_id' do
-  response = settings.service_kit_getter.get_service_kit_attribute params[:sku], params[:group_id]
+get '/product/:sku/service_kits/' do
+  response = settings.service_kit_getter.get_service_kit_attribute params[:sku], params[:stats]
   response.to_json
 end
 
-get '/product/:sku/major_components/:group_id' do
-  response = settings.bom_reader.get_major_component params[:sku], params[:group_id]
+get '/product/:sku/major_components/' do
+  response = settings.bom_reader.get_major_component params[:sku], params[:stats]
   response.to_json
 end
 

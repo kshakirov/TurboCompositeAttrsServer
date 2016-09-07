@@ -9,10 +9,10 @@ class AttributesCacher
   end
 
   def put sku
-    # @where_used_setter.set_where_used_attribute sku
+    @where_used_setter.set_where_used_attribute sku
     @bom_setter.set_bom_attribute sku
-    # @interchange_setter.set_interchange_attribute sku
-    # @service_kit_setter.set_service_kit_attribute sku
-    # @sales_note_setter.set_sales_note_attribute sku
+    @interchange_setter.set_interchange_attribute sku
+    @service_kit_setter.set_service_kit_attribute sku
+    @sales_note_setter.set_sales_note_attribute sku
   end
 end

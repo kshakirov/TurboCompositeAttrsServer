@@ -8,7 +8,7 @@ class ProductsCollection
 
   def _process_products since_id, cacher
     Part.find_each(batch_size: 100) do |p|
-      if since_id and since_id  < p.id
+      if since_id and since_id < p.id
         puts "Adding Product [#{p.id}], name [#{p.manfr_part_num}]"
         cacher.put p.id
       end
@@ -27,16 +27,18 @@ class ProductsCollection
   end
 
   def cache_all_attributes since_id
-    _process_products  since_id, @product_cacher
+    _process_products since_id, @product_cacher
   end
 
   def cache_kit_matrix since_id=0
-    _process_products  since_id, @kit_matrix_cacher
+    _process_products since_id, @kit_matrix_cacher
   end
 
   def cache_price_attribute since_id=0
     _process_products_in_batch since_id
   end
 
-
+  def cache_one_attribute since_id=0, cacher_instance
+    _process_products since_id, cacher_instance
+  end
 end

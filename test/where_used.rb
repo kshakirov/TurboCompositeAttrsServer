@@ -5,6 +5,7 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
   def test_where_used_setter
     setter = WhereUsedSetter.new
     setter.set_where_used_attribute 49639
+    setter.set_where_used_attribute 6242
 
   end
 

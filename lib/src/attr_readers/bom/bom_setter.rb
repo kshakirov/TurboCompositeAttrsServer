@@ -11,7 +11,7 @@ class BomSetter
     @price_reader.get_attribute ids
   end
 
-  def add_prices_to_bom_response boms, prices
+  def add_prices_to_bom boms, prices
     boms_array = []
     boms.each_value do |bom|
       prices.each do |price|
@@ -30,13 +30,13 @@ class BomSetter
     ids
   end
 
-  def add_standard_attrs_2_bom boms
-    bom_hash = @bom_builder.add_standard_attributes(boms)
-    add_prices_to_bom_response bom_hash, get_prices(get_boms_ids(bom_hash))
+  def build_bom boms
+    bom_hash = @bom_builder.build(boms)
+    add_prices_to_bom bom_hash, get_prices(get_boms_ids(bom_hash))
   end
 
   def cache_bom sku
-    boms = add_standard_attrs_2_bom(@bom_reader.get_attribute sku)
+    boms = build_bom(@bom_reader.get_attribute sku)
     @redis_cache.set_cached_response sku, 'bom', boms
   end
 

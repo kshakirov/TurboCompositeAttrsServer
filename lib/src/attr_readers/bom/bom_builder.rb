@@ -19,6 +19,19 @@ class BomBuilder
     }
   end
 
+  def is_direct? bom
+    bom[:type] == 'direct'
+  end
+
+  def add_direct_oe_part ti_part_sku, bom, part
+    if is_direct? bom
+        @ti_hash[ti_part_sku][:oe_sku] = bom[:sku]
+        @ti_hash[ti_part_sku][:oe_part_number] = part.manfr_part_num
+        @ti_hash[ti_part_sku][:name] = part.name || part.part_type.name  + '-' + part.manfr_part_num
+    end
+  end
+
+
   def add_interchange ti_part_sku, part
     @ti_hash[ti_part_sku][:interchanges].
         push({:part_number => part.manfr_part_num, :sku => part.id})
@@ -39,9 +52,10 @@ class BomBuilder
     else
       create_hash_key ti_part_sku, part, bom
     end
+    add_direct_oe_part ti_part_sku,bom, part
   end
 
-  def add_standard_attributes boms
+  def build boms
     @ti_hash = {}
     boms.each_with_index do |bom|
       part = Part.find bom[:sku]

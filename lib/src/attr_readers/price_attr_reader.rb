@@ -6,14 +6,16 @@ class PriceAttrReader
 
   def _get_cached_prices ids
     prices = []
-    ids.each do |id|
-      prices.push(@redis_cache.get_cached_response(id, "price"))
+    unless ids.nil?
+      ids.each do |id|
+        prices.push(@redis_cache.get_cached_response(id, "price"))
+      end
     end
     prices
   end
 
-  def get_attribute  ids
-      _get_cached_prices ids
+  def get_attribute ids
+    _get_cached_prices ids
   end
 
   def get_rest_prices ids

@@ -21,14 +21,16 @@ class WhereUsedSetter
   end
 
   def add_standard_attrs_2_wu wus
-     ids = @where_used_builder.build wus
+    ids = @where_used_builder.build wus
     add_prices_to_response wus, get_prices(ids)
   end
 
   def cache_where_used sku
     wus = @where_used_reader.get_attribute(sku)
-    wus = add_standard_attrs_2_wu(wus)
-    @redis_cache.set_cached_response sku, 'where_used', wus
+    unless wus.nil?
+      wus = add_standard_attrs_2_wu(wus)
+      @redis_cache.set_cached_response sku, 'where_used', wus
+    end
   end
 
   def set_where_used_attribute sku

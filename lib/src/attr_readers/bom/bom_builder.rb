@@ -23,11 +23,17 @@ class BomBuilder
     bom[:type] == 'direct'
   end
 
+  def remove_duplicate_interchange ti_part_sku, part
+    sku = part.id
+    @ti_hash[ti_part_sku][:interchanges].delete_if{|i|  i[:sku] == sku}
+  end
+
   def add_direct_oe_part ti_part_sku, bom, part
     if is_direct? bom
         @ti_hash[ti_part_sku][:oe_sku] = bom[:sku]
         @ti_hash[ti_part_sku][:oe_part_number] = part.manfr_part_num
         @ti_hash[ti_part_sku][:name] = part.name || part.part_type.name  + '-' + part.manfr_part_num
+        remove_duplicate_interchange ti_part_sku, part
     end
   end
 

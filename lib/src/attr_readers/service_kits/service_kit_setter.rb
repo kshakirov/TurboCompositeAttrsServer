@@ -4,6 +4,7 @@ class ServiceKitSetter
     @service_kits = ServiceKitsAttrReader.new
     @redis_cache =  redis_cache
     @price_reader = PriceAttrReader.new(@redis_cache)
+    @builder = ServiceKitBuilder.new
   end
 
   def get_prices ids
@@ -13,34 +14,16 @@ class ServiceKitSetter
   def add_prices_to_sk_response sks, prices
     sks.each_with_index do |sk, index|
       prices.each do |price|
-        if price and price[:partId] == sk[:sku]
+        if price and price[:partId] == sk[:tiSku]
           sks[index][:prices] = price[:prices]
         end
       end
     end
   end
 
-  def _get_ti_part_number sku
-    unless sku.nil?
-      part = Part.find sku
-      part.manfr_part_num
-    end
-  end
-
-  def add_standard_attrs_2_sk service_kits
-    if not service_kits.nil?
-      ids = []
-      service_kits.each_with_index do |value, index|
-        part = Part.find value[:sku]
-        ids.push value[:sku]
-        service_kits[index][:part_number] = part.manfr_part_num
-        service_kits[index][:ti_part_number] = _get_ti_part_number(value[:tiSku])
-        service_kits[index][:description] = part.description
-      end
+def add_standard_attrs_2_sk service_kits
+      ids = @builder.build service_kits
       add_prices_to_sk_response(service_kits, get_prices(ids))
-    else
-      nil
-    end
   end
 
   def cache_service_kit sku

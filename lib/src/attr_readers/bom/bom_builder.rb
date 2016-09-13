@@ -15,6 +15,8 @@ class BomBuilder
         :part_type => ti_part.part_type.name,
         :part_number => ti_part.manfr_part_num,
         :name => ti_part.name || ti_part.part_type.name  + '-' + ti_part.manfr_part_num,
+        :type => bom[:type],
+        :part_type_parent => bom[:part_type_parent],
         :interchanges => [{:part_number => part.manfr_part_num, :sku => part.id}]
     }
   end

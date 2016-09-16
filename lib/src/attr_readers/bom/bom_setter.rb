@@ -15,7 +15,7 @@ class BomSetter
     boms_array = []
     boms.each_value do |bom|
       prices.each do |price|
-        if price[:partId] == bom[:sku]
+        if price and  price[:partId] == bom[:sku]
           bom[:prices] = price[:prices]
           boms_array.push bom
         end

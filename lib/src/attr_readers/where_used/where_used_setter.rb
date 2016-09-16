@@ -13,7 +13,7 @@ class WhereUsedSetter
   def add_prices_to_response response, prices
     response.each do |key, value|
       prices.each do |price|
-        if price[:partId] == key or price[:partId] == value[:tiSku]
+        if price and (price[:partId] == key or price[:partId] == value[:tiSku])
           response[key][:prices] = price[:prices]
         end
       end

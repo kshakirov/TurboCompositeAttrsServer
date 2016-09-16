@@ -41,7 +41,7 @@ class KitMatrixSetter
     boms = @bom_getter.get_bom_attribute(sku, nil)
     ti_boms = []
     boms.each do |bom|
-      if bom[:ti_part_sku].size > 0 and bom[:ti_part_sku][0].nil?
+      if  bom[:ti_part_sku] and  bom[:ti_part_sku].size > 0 and bom[:ti_part_sku][0].nil?
         ti_boms.push bom
       end
     end

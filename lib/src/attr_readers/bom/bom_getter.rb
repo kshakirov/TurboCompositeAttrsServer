@@ -4,6 +4,7 @@ class BomGetter
     @group_prices_map = {'11' => 'E'}
     @redis_cache = redis_cache
     @decriptor = CustomerInfoDecypher.new
+    @major_component_builder = MajorComponent.new
   end
 
   def add_group_price boms, group_id
@@ -52,19 +53,10 @@ class BomGetter
     end
   end
 
-  def filter_major_components_only boms
-    mcs = []
-    boms.each do |bom|
-      if bom[:part_type_parent] == 'major_component'
-        mcs.push bom
-      end
-    end
-    mcs
-  end
 
   def get_major_component sku, id
     boms = _get_bom_with_prices sku, id
-    filter_major_components_only boms
+    @major_component_builder.build boms
   end
 
 end

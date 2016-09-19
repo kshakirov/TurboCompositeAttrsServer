@@ -8,4 +8,10 @@ class TestM_Views < Minitest::Unit::TestCase
 
   end
 
+  def test_part
+    part = Part.find 6392
+    refute_nil part, "Part is nil"
+    assert_equal "test", part.name
+  end
+
 end

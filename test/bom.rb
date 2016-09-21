@@ -22,5 +22,9 @@ class TestBomAttrsReader < MiniTest::Unit::TestCase
      refute_nil attrs
    end
 
+  def test_bom_prices
+
+  end
+
 
 end

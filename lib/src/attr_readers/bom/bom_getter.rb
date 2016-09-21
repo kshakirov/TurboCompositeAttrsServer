@@ -1,47 +1,27 @@
 class BomGetter
 
   def initialize redis_cache= RedisCache.new(Redis.new(:host => "redis", :db => 3))
-    @group_prices_map = {'11' => 'E'}
     @redis_cache = redis_cache
     @decriptor = CustomerInfoDecypher.new
     @major_component_builder = MajorComponent.new
-  end
-
-  def add_group_price boms, group_id
-    unless boms.nil?
-      boms.each_with_index do |value, index|
-        unless value[:prices].nil?
-          boms[index][:prices] = value[:prices][group_id.to_sym]
-        end
-      end
-    end
-  end
-
-  def remove_bom_price boms
-    unless boms.nil?
-      boms.each_with_index do |value, index|
-        boms[index][:prices] = 'login'
-      end
-    end
+    @price_manager = BomPriceManager.new
   end
 
   def get_cached_bom sku
     @redis_cache.get_cached_response sku, 'bom'
   end
 
-
   def _get_bom_without_prices sku
     get_cached_bom sku
   end
-
 
   def _get_bom_with_prices sku, id
     group_id = @decriptor.get_customer_group id
     boms = get_cached_bom sku
     if group_id=='no stats'
-      remove_bom_price boms
+      @price_manager.remove_bom_price boms
     else
-      add_group_price boms, @group_prices_map[group_id]
+      @price_manager.add_group_price boms, group_id
     end
   end
 
@@ -52,7 +32,6 @@ class BomGetter
       _get_bom_with_prices sku, id
     end
   end
-
 
   def get_major_component sku, id
     boms = _get_bom_with_prices sku, id

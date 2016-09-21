@@ -17,33 +17,33 @@ class KitMatrixSetter
   end
 
   def _create_kit_matrix_table kits
-    kit_matrix_hash = {}
+    kit_matrix_rows = {}
     kit_matrix_headers = []
     kits.each do |key, value|
       id = value[:part_number]
       if value[:manufacturer]=='Turbo International'
         _create_header id, kit_matrix_headers
         value[:bom].each do |v|
-          if kit_matrix_hash.key? v[:part_number].to_s.to_sym
-            kit_matrix_hash[v[:part_number].to_s.to_sym][id.to_s.to_sym] = v[:quantity]
+          if kit_matrix_rows.key? v[:part_number].to_s.to_sym
+            kit_matrix_rows[v[:part_number].to_s.to_sym][id.to_s.to_sym] = v[:quantity]
           else
-            kit_matrix_hash[v[:part_number].to_s.to_sym] = {
+            kit_matrix_rows[v[:part_number].to_s.to_sym] = {
                 :part_number => v[:part_number], :description => v[:description], :part_type => v[:part_type],
                 id.to_s.to_sym => v[:quantity]}
           end
         end
       end
     end
-    return kit_matrix_hash, _base_header_array.concat(kit_matrix_headers)
+    return kit_matrix_rows, _base_header_array.concat(kit_matrix_headers)
   end
 
   def _get_only_ti_boms sku
     boms = @bom_getter.get_bom_attribute(sku, nil)
     ti_boms = []
     boms.each do |bom|
-      if  bom[:ti_part_sku] and  bom[:ti_part_sku].size > 0 and bom[:ti_part_sku][0].nil?
+      #if  bom[:ti_part_sku] and  bom[:ti_part_sku].size > 0 and bom[:ti_part_sku][0].nil?
         ti_boms.push bom
-      end
+      #end
     end
     ti_boms
   end
@@ -76,8 +76,8 @@ class KitMatrixSetter
 
 
   def cache_kit_matrix sku
-      kms =  @kit_matrix.get_attribute sku
-      kms = _get_ti_kits kms
+      km_headers =  @kit_matrix.get_attribute sku
+      kms = _get_ti_kits km_headers
       @redis_cache.set_cached_response sku, 'kit_matrix', kms
   end
 

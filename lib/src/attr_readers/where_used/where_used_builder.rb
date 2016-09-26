@@ -22,11 +22,19 @@ class WhereUsedBuilder
     end
   end
 
+  def  get_rid_of_repetetive_turbos turbo_part_numbers
+      unless turbo_part_numbers.nil?
+        turbo_part_numbers.to_set
+      end
+  end
+
+
   def _build wus
     ids = []
     wus.each do |key, value|
       item = load_item value[:sku]
       wus[key][:description] = item.description
+      wus[key][:turboPartNumbers] = get_rid_of_repetetive_turbos(value[:turboPartNumbers])
       ids.push(get_id_for_price(value))
     end
     ids

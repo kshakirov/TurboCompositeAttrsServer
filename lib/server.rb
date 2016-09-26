@@ -1,3 +1,4 @@
+require 'set'
 require_relative 'src/tables/views'
 require_relative 'src/tables/parts'
 require_relative 'src/attr_readers/group_price'

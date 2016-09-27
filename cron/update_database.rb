@@ -23,5 +23,7 @@ data = RestClient::Request.execute(:method => :get, :url => url, :timeout => 360
 save_file(data, filename)
 ctime, size = get_statistics(filename)
 logger.info("Downloaded File Created [#{ctime.to_s}] Has Size [#{size.to_s}]")
+`mysql -h mysql -umetaserver -pgogol metadata < metadata_prod.sql`
+logger.info("Database restored from #{filename}, ready to update Redis")
 logger.info("Finishing update")
 

@@ -12,12 +12,12 @@ def save_file data, filename
 end
 
 logger = Logger.new('/home/ubuntu/TurboCompositeAttrsServer/logs/cron.log')
+logger.level =Logger::INFO
 working_dir = '/home/ubuntu/'
 filename = working_dir +  'metadata_prod.sql'
 url = 'metadata.turbointernational.com:4568/files/metadata_prod.sql'
 
 Dir.chdir(working_dir)
-logger.level =Logger::INFO
 logger.info("Starting update")
 data = RestClient::Request.execute(:method => :get, :url => url, :timeout => 3600)
 save_file(data, filename)

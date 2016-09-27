@@ -8,7 +8,10 @@ require_relative "../lib/src/tools/kit_matrix_cacher"
 require_relative  "../lib/src/tools/products_collection"
 require 'redis'
 require 'composite_primary_keys'
+require 'logger'
 configuration = YAML::load(IO.read('database.yml'))
 ActiveRecord::Base.establish_connection(configuration['development'])
+@logger = Logger.new('/home/ubuntu/TurboCompositeAttrsServer/logs/cron.log')
+@logger.level =Logger::INFO
 
 

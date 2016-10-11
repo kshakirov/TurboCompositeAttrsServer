@@ -12,25 +12,29 @@ class KitMatrixSetter
      {:field => 'description', :title => 'Desc' , :show => true}]
   end
 
-  def _create_header name, headers
-    headers.push({:field => name, :title => name , :show => true})
+  def _create_header name,sku, headers
+    headers.push({:field => name, :title => name , :show => true, :sku => sku})
+  end
+
+  def create_row id, v, kit_matrix_rows
+    if kit_matrix_rows.key? v[:part_number].to_s.to_sym
+      kit_matrix_rows[v[:part_number].to_s.to_sym][id.to_s.to_sym] = v[:quantity]
+    else
+      kit_matrix_rows[v[:part_number].to_s.to_sym] = {
+          :part_number => v[:part_number], :description => v[:description], :part_type => v[:part_type],
+          id.to_s.to_sym => v[:quantity], :sku =>v[:sku]}
+    end
   end
 
   def _create_kit_matrix_table kits
     kit_matrix_rows = {}
     kit_matrix_headers = []
     kits.each do |key, value|
-      id = value[:part_number]
+      id,sku = value[:part_number], value[:sku]
       if value[:manufacturer]=='Turbo International'
-        _create_header id, kit_matrix_headers
+        _create_header id, sku, kit_matrix_headers
         value[:bom].each do |v|
-          if kit_matrix_rows.key? v[:part_number].to_s.to_sym
-            kit_matrix_rows[v[:part_number].to_s.to_sym][id.to_s.to_sym] = v[:quantity]
-          else
-            kit_matrix_rows[v[:part_number].to_s.to_sym] = {
-                :part_number => v[:part_number], :description => v[:description], :part_type => v[:part_type],
-                id.to_s.to_sym => v[:quantity]}
-          end
+          create_row(id, v, kit_matrix_rows)
         end
       end
     end

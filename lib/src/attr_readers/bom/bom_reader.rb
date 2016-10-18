@@ -59,11 +59,7 @@ class BomReader
   end
 
   def conv_from_hash_to_array hash
-    values = []
-    hash.each do |key, value|
-      values.push value
-    end
-    values
+    hash.values
   end
 
   def create_hash bom

@@ -6,6 +6,11 @@ class BomBuilder
         not bom[:ti_part_sku].first.nil?
   end
 
+  def is_ti_manufacturer part
+      part.manfr.name == "Turbo International"
+  end
+
+
   def create_hash_key ti_part_sku, part, bom
     ti_part = load_ti_part ti_part_sku
     @ti_hash[ti_part_sku] = {
@@ -18,6 +23,20 @@ class BomBuilder
         :type => bom[:type],
         :part_type_parent => bom[:part_type_parent],
         :interchanges => [{:part_number => part.manfr_part_num, :sku => part.id}]
+    }
+  end
+
+  def build_bom_object_from_ti_part bom, part
+    @ti_hash[part.id] = {
+        :sku => part.id,
+        :description => part.description,
+        :quantity => bom[:quantity],
+        :part_type => part.part_type.name,
+        :part_number => part.manfr_part_num,
+        :name => part.name || part.part_type.name  + '-' + part.manfr_part_num,
+        :type => bom[:type],
+        :part_type_parent => bom[:part_type_parent],
+        :interchanges => []
     }
   end
 
@@ -69,6 +88,8 @@ class BomBuilder
       part = Part.find bom[:sku]
       if has_ti_part(bom)
         build_bom_object(bom , part)
+      elsif is_ti_manufacturer(part)
+        build_bom_object_from_ti_part(bom, part)
       end
     end
     @ti_hash

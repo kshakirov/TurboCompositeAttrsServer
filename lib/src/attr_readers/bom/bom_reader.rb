@@ -76,10 +76,12 @@ class BomReader
   def aggregate_ti_part_skus boms
     hash = {}
     boms.each do |bom|
-      if hash.has_key? bom['descendant_sku']
-        hash[bom['descendant_sku']][:ti_part_sku].push bom['int_sku']
-      else
-        hash[bom['descendant_sku']] = create_hash(bom)
+      unless bom['type']=='Interchange'
+        if hash.has_key? bom['descendant_sku']
+          hash[bom['descendant_sku']][:ti_part_sku].push bom['int_sku']
+        else
+          hash[bom['descendant_sku']] = create_hash(bom)
+        end
       end
     end
     hash

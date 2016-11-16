@@ -36,7 +36,7 @@ class BomGetter
 
   def get_major_component sku, id
     boms = _get_bom_with_prices sku, id
-    @major_component_builder.build boms
+    @major_component_builder.build_major_comps_list boms
   end
 
 end

@@ -7,25 +7,10 @@ class MajorComponent
     bom[:part_type] == "Cartridge"
   end
 
-
-  def make_cartridge_first mcs, bom
-      if mcs.size > 0
-        mcs.unshift(bom)
-      else
-        mcs.push(bom)
-      end
-  end
-
-  def build boms
-    mcs = []
-    boms.each do |bom|
-      if  is_major_component?(bom)
-        mcs.push bom
-      elsif is_cartridge(bom)
-        make_cartridge_first(mcs, bom)
-      end
-    end
-    mcs
+  def build_major_comps_list boms
+    components =  boms.select{|bom|is_major_component?(bom) }
+    cartridge = boms.select{|bom| is_cartridge(bom)}
+    cartridge + components
   end
 
 

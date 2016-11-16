@@ -31,7 +31,7 @@ class BomBuilder
     item[:part_number] = part.manfr_part_num
     item[:name] = part.name || part.part_type.name + '-' + part.manfr_part_num
     item[:type] = bom[:type]
-    item[:part_type_parent] = bom[:part_type_parent]
+    item[:part_type_parent] = bom['part_type_parent']
     item
   end
 
@@ -46,6 +46,7 @@ class BomBuilder
         return part
       end
     end
+    nil
   end
 
   def get_ti_part sku
@@ -64,7 +65,7 @@ class BomBuilder
       item[:part_type] =part.part_type.name
       item[:quantity] =bom['quantity']
       item[:type] = bom[:type]
-      item[:part_type_parent] = bom[:part_type_parent]
+      item[:part_type_parent] = bom['part_type_parent']
       item[:interchanges] = [{:part_number => part.manfr_part_num, :sku => part.id}]
     else
       item = build_boms_list_item_ti(bom, ti_part)

@@ -4,7 +4,9 @@ class TestBomAttrsReader < MiniTest::Unit::TestCase
 
   def test_bom_set
     setter = BomSetter.new
-    setter.set_bom_attribute 542
+    setter.set_bom_attribute 7130
+    setter.set_bom_attribute 6991
+    setter.set_bom_attribute 3756
     setter.set_bom_attribute 48536
     setter.set_bom_attribute 840
     setter.set_bom_attribute 6392

@@ -1,98 +1,89 @@
 class BomBuilder
 
-  def has_ti_part bom
-    (not bom[:ti_part_sku].nil?) and
-        bom[:ti_part_sku].size > 0  and
-        not bom[:ti_part_sku].first.nil?
+  def initialize
+    @interchanges_getter = InterchangeGetter.new
   end
 
   def is_ti_manufacturer part
-      part.manfr.name == "Turbo International"
+    part.manfr.name == "Turbo International"
   end
 
-
-  def create_hash_key ti_part_sku, part, bom
-    ti_part = load_ti_part ti_part_sku
-    @ti_hash[ti_part_sku] = {
-        :sku => ti_part_sku,
-        :description => ti_part.description,
-        :quantity => bom[:quantity],
-        :part_type => ti_part.part_type.name,
-        :part_number => ti_part.manfr_part_num,
-        :name => ti_part.name || ti_part.part_type.name  + '-' + ti_part.manfr_part_num,
-        :type => bom[:type],
-        :part_type_parent => bom[:part_type_parent],
-        :interchanges => [{:part_number => part.manfr_part_num, :sku => part.id}]
+  def make_list_item
+    {
+        sku: nil,
+        description: nil,
+        quantity: nil,
+        part_type: nil,
+        part_number: nil,
+        name: nil,
+        type: nil,
+        part_type_parent: nil,
+        interchanges: []
     }
   end
 
-  def build_bom_object_from_ti_part bom, part
-    @ti_hash[part.id] = {
-        :sku => part.id,
-        :description => part.description,
-        :quantity => bom[:quantity],
-        :part_type => part.part_type.name,
-        :part_number => part.manfr_part_num,
-        :name => part.name || part.part_type.name  + '-' + part.manfr_part_num,
-        :type => bom[:type],
-        :part_type_parent => bom[:part_type_parent],
-        :interchanges => []
-    }
+  def build_boms_list_item_ti bom, part
+    item = make_list_item
+    item[:sku] =part.id
+    item[:description] = part.description
+    item[:quantity] =bom['quantity']
+    item[:part_type] =part.part_type.name
+    item[:part_number] = part.manfr_part_num
+    item[:name] = part.name || part.part_type.name + '-' + part.manfr_part_num
+    item[:type] = bom[:type]
+    item[:part_type_parent] = bom['part_type_parent']
+    item
   end
 
-  def is_direct? bom
-    bom[:type] == 'direct'
+  def is_type_direct? bom
+    bom['type'] == 'direct'
   end
 
-  def remove_duplicate_interchange ti_part_sku, part
-    sku = part.id
-    @ti_hash[ti_part_sku][:interchanges].delete_if{|i|  i[:sku] == sku}
-  end
-
-  def add_direct_oe_part ti_part_sku, bom, part
-    if is_direct? bom
-        @ti_hash[ti_part_sku][:oe_sku] = bom[:sku]
-        @ti_hash[ti_part_sku][:oe_part_number] = part.manfr_part_num
-        @ti_hash[ti_part_sku][:name] = part.name || part.part_type.name  + '-' + part.manfr_part_num
-        remove_duplicate_interchange ti_part_sku, part
-    end
-  end
-
-
-  def add_interchange ti_part_sku, part
-    @ti_hash[ti_part_sku][:interchanges].
-        push({:part_number => part.manfr_part_num, :sku => part.id})
-  end
-
-  def has_ti_sku_key ti_part_sku
-    @ti_hash.has_key? ti_part_sku
-  end
-
-  def load_ti_part ti_part_sku
-     Part.find ti_part_sku
-  end
-
-  def build_bom_object bom, part
-    ti_part_sku = bom[:ti_part_sku].first
-    if has_ti_sku_key ti_part_sku
-      add_interchange ti_part_sku, part
-    else
-      create_hash_key ti_part_sku, part, bom
-    end
-    add_direct_oe_part ti_part_sku,bom, part
-  end
-
-  def build boms
-    @ti_hash = {}
-    boms.each_with_index do |bom|
-      part = Part.find bom[:sku]
-      if has_ti_part(bom)
-        build_bom_object(bom , part)
-      elsif is_ti_manufacturer(part)
-        build_bom_object_from_ti_part(bom, part)
+  def find_ti_interchange tinterchanges
+    tinterchanges.each do |i|
+      part = Part.find i[:id]
+      if is_ti_manufacturer(part)
+        return part
       end
     end
-    @ti_hash
+    nil
+  end
+
+  def get_ti_part sku
+    interchanges = @interchanges_getter.get_cached_interchange(sku)
+    unless not interchanges or  interchanges.empty?
+      return find_ti_interchange(interchanges)
+    end
+    nil
+  end
+
+
+  def build_boms_list_item_oem bom, part
+    item = make_list_item
+    ti_part = get_ti_part(part.id)
+    if ti_part.nil?
+      item[:part_type] =part.part_type.name
+      item[:quantity] =bom['quantity']
+      item[:type] = bom[:type]
+      item[:part_type_parent] = bom['part_type_parent']
+      item[:interchanges] = [{:part_number => part.manfr_part_num, :sku => part.id}]
+    else
+      item = build_boms_list_item_ti(bom, ti_part)
+      item[:interchanges] = [{:part_number => part.manfr_part_num, :sku => part.id}]
+    end
+    item
+  end
+
+  def build_boms_list boms
+    boms_list = boms.select { |b| is_type_direct?(b) }
+    boms_list.map do |bl|
+      part = Part.find bl['descendant_sku']
+      if is_ti_manufacturer(part)
+        build_boms_list_item_ti(bl, part)
+      else
+        build_boms_list_item_oem(bl, part)
+      end
+    end
   end
 
 end

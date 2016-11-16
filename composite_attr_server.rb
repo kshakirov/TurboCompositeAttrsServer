@@ -4,6 +4,7 @@ require 'uri'
 require 'active_support/all'
 require 'rest-client'
 require 'redis'
+require 'forwardable'
 require_relative 'lib/server'
 
 set :bind, '0.0.0.0'

@@ -1,4 +1,9 @@
 class BomGetter
+  extend Forwardable
+  def_delegator :@redis_cache, :get_cached_response, :get_cached_bom
+  def_delegator :@price_manager, :remove_bom_price, :remove_bom_price
+  def_delegator :@price_manager, :add_group_price, :add_group_price
+  def_delegator :@decriptor, :get_customer_group, :get_customer_group
 
   def initialize redis_cache= RedisCache.new(Redis.new(:host => "redis", :db => 3))
     @redis_cache = redis_cache
@@ -7,21 +12,17 @@ class BomGetter
     @price_manager = BomPriceManager.new
   end
 
-  def get_cached_bom sku
-    @redis_cache.get_cached_response sku, 'bom'
-  end
-
   def _get_bom_without_prices sku
-    get_cached_bom sku
+    get_cached_bom sku, 'bom'
   end
 
   def _get_bom_with_prices sku, id
-    group_id = @decriptor.get_customer_group id
-    boms = get_cached_bom sku
+    group_id = get_customer_group(id)
+    boms = get_cached_bom(sku, 'bom')
     if group_id=='no stats'
-      @price_manager.remove_bom_price boms
+      remove_bom_price(boms)
     else
-      @price_manager.add_group_price boms, group_id
+      add_group_price(boms, group_id)
     end
   end
 
@@ -35,7 +36,7 @@ class BomGetter
 
   def get_major_component sku, id
     boms = _get_bom_with_prices sku, id
-    @major_component_builder.build boms
+    @major_component_builder.build_major_comps_list boms
   end
 
 end

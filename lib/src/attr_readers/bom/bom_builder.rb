@@ -8,6 +8,10 @@ class BomBuilder
     part.manfr.name == "Turbo International"
   end
 
+  def is_int_ti_manufacturer interchange
+    interchange[:manufacturer] == "Turbo International"
+  end
+
   def make_list_item
     {
         sku: nil,
@@ -32,6 +36,7 @@ class BomBuilder
     item[:name] = part.name || part.part_type.name + '-' + part.manfr_part_num
     item[:type] = bom[:type]
     item[:part_type_parent] = bom['part_type_parent']
+    item[:interchanges] = find_all_interchanges(part.id)
     item
   end
 
@@ -39,19 +44,35 @@ class BomBuilder
     bom['type'] == 'direct'
   end
 
-  def find_ti_interchange tinterchanges
-    tinterchanges.each do |i|
-      part = Part.find i[:id]
-      if is_ti_manufacturer(part)
-        return part
+  def find_ti_interchange interchanges
+    interchanges.each do |i|
+      if is_int_ti_manufacturer(i)
+        return i
       end
     end
     nil
   end
 
+  def find_all_interchanges sku
+    interchanges = @interchanges_getter.get_cached_interchange(sku)
+    if interchanges
+      return interchanges.map { |i| {part_number: i[:part_number], sku: i[:id]} }
+    end
+    []
+  end
+
+  def find_all_non_ti_interchanges sku
+    interchanges = @interchanges_getter.get_cached_interchange(sku)
+    if interchanges
+      ins = interchanges.select {|i| not is_int_ti_manufacturer(i) }
+      return ins.map { |i| {part_number: i[:part_number], sku: i[:id]} }
+    end
+    []
+  end
+
   def get_ti_part sku
     interchanges = @interchanges_getter.get_cached_interchange(sku)
-    unless not interchanges or  interchanges.empty?
+    unless not interchanges or interchanges.empty?
       return find_ti_interchange(interchanges)
     end
     nil
@@ -62,14 +83,24 @@ class BomBuilder
     item = make_list_item
     ti_part = get_ti_part(part.id)
     if ti_part.nil?
+      item[:oe_sku] = part.id
+      item[:oe_part_number] = part.manfr_part_num
       item[:part_type] =part.part_type.name
       item[:quantity] =bom['quantity']
       item[:type] = bom[:type]
       item[:part_type_parent] = bom['part_type_parent']
-      item[:interchanges] = [{:part_number => part.manfr_part_num, :sku => part.id}]
+      item[:interchanges] = find_all_non_ti_interchanges(part.id)
     else
-      item = build_boms_list_item_ti(bom, ti_part)
-      item[:interchanges] = [{:part_number => part.manfr_part_num, :sku => part.id}]
+      item[:oe_sku] = part.id
+      item[:oe_part_number] = part.manfr_part_num
+      item[:sku] =ti_part[:id]
+      item[:description] = ""
+      item[:quantity] =bom['quantity']
+      item[:part_type] =part.part_type.name
+      item[:part_type_parent] = bom['part_type_parent']
+      item[:part_number] = ti_part[:part_number]
+      item[:name] = part.part_type.name + '-' + ti_part[:part_number]
+      item[:interchanges] = find_all_non_ti_interchanges(part.id)
     end
     item
   end

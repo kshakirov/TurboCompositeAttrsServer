@@ -3,6 +3,7 @@ class ProductsCollection
     @product_cacher = AttributesCacher.new
     @price_cacher = PriceCacher.new
     @kit_matrix_cacher = KitMatrixCacher.new
+    @gasket_kit_cacher = GasketKitCacher.new
     ActiveRecord::Base.logger = nil
   end
 
@@ -24,6 +25,18 @@ class ProductsCollection
       @price_cacher.put ids
       counter += 1
     end
+  end
+
+  def process_gaskets  cacher
+      GasketKit.all.each  do |gk|
+        puts "Adding Gasket Kit  [#{gk.part_id}]"
+        cacher.put gk.id
+      end
+  end
+
+
+  def cache_gasket_kits
+      process_gaskets(@gasket_kit_cacher)
   end
 
   def cache_all_attributes since_id

@@ -58,7 +58,7 @@ get '/product/:sku/major_components/' do
 end
 
 get '/product/:sku/gasket_kit/' do
-  response = settings.gasket_kit_getter.get_get_gasket_kit params[:sku], params[:stats]
+  response = settings.gasket_kit_getter.get_gasket_kit_attribute params[:sku], params[:stats]
   response.to_json
 end
 

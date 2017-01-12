@@ -12,17 +12,11 @@ class GasketKitSetter
     }
   end
 
-  def add_interchanges gasket_kit_turbos
-    gasket_kit_turbos.map { |t|
-      t[:interchanges] = @redis_cache.get_cached_response(t[:id], "interchange")
-      t
-    }
-  end
+
 
   def cache_gasket_kit sku
     gasket_kit_turbos = @gasket_kit_reader.get_attribute(sku)
     add_prices(gasket_kit_turbos)
-    add_interchanges(gasket_kit_turbos)
     @redis_cache.set_cached_response(sku,  'gasket_kit',gasket_kit_turbos)
   end
 

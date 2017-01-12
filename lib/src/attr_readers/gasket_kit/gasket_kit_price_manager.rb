@@ -6,9 +6,9 @@ class GasketKitPriceManager
 
   def add_group_price turbos, id
     group_id = @group_price.prices[id]
-    unless boms.nil?
+    unless turbos.nil?
       turbos.each do |value|
-        unless value[:prices].nil?
+        if  value[:prices]
           value[:prices] = value[:prices][group_id.to_sym]
         end
       end

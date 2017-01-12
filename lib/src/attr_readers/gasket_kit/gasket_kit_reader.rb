@@ -14,9 +14,23 @@ class GasketKitReader
       part.manfr.name == 'Turbo International'
   end
 
-  def get_ti_part_number part
+  def get_ti_interchange interchanges
+    interchanges.find{|i| i[:manufacturer] == "Turbo International" } if interchanges.class.name == "Array"
+  end
+
+  def get_ti_part_number part, interchanges
     if is_ti_manufactured? part
       part.manfr_part_num
+    elsif (ti = get_ti_interchange(interchanges))
+        ti[:part_number]
+    end
+  end
+
+  def get_ti_part_id part, interchanges
+    if is_ti_manufactured? part
+      part.manfr_part_num
+    elsif (ti = get_ti_interchange(interchanges))
+      ti[:id]
     end
   end
 
@@ -26,17 +40,29 @@ class GasketKitReader
     end
   end
 
+  def rid_of_ti_interchange t , interchanges
+    if t[:id] and t[:ti_id] and interchanges
+      interchanges.delete_at(interchanges.index{|i| i[:id] == t[:ti_id]} || li.length)
+      t[:interchanges] =  interchanges
+    end
+    t
+  end
+
   def get_parts_from_turbo turbos
     turbos.map { |turbo|
       part = Part.find turbo.part_id
-      {
-          id: part.id, manufacturer: part.manfr.name,
+      interchanges = get_interchange_attribute(part.id)
+      t  = {
+          id: part.id,
+          ti_id: get_ti_part_id(part, interchanges),
+          manufacturer: part.manfr.name,
           part_number: get_oe_part_number(part),
-          ti_part_number: get_ti_part_number(part),
+          ti_part_number: get_ti_part_number(part, interchanges),
           description: part.description,
           turbo_type: get_turbo_type(turbo),
-          interchanges:   get_interchange_attribute(part.id)
+          interchanges:   interchanges
       }
+      rid_of_ti_interchange(t, interchanges)
     }
   end
 

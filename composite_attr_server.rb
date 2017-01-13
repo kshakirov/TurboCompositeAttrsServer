@@ -16,6 +16,7 @@ set :interchange_reader, InterchangeGetter.new(settings.redis_client)
 set :kit_matrix_getter, KitMatrixGetter.new(settings.redis_client)
 set :service_kit_getter, ServiceKitGetter.new(settings.redis_client)
 set :sales_note_getter, SalesNoteGetter.new(settings.redis_client)
+set :gasket_kit_getter, GasketKitGetter.new(settings.redis_client)
 
 
 get '/product/:sku/where_used/' do
@@ -53,6 +54,11 @@ end
 
 get '/product/:sku/major_components/' do
   response = settings.bom_reader.get_major_component params[:sku], params[:stats]
+  response.to_json
+end
+
+get '/product/:sku/gasket_kit/' do
+  response = settings.gasket_kit_getter.get_gasket_kit_attribute params[:sku], params[:stats]
   response.to_json
 end
 

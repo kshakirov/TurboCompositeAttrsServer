@@ -77,3 +77,7 @@ class Salesnotepart < ActiveRecord::Base
   self.table_name = "sales_note_part"
 end
 
+class GasketKit < ActiveRecord::Base
+  self.table_name ='gasket_kit'
+  self.primary_key = "part_id"
+end

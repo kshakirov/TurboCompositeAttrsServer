@@ -17,6 +17,7 @@ set :kit_matrix_getter, KitMatrixGetter.new(settings.redis_client)
 set :service_kit_getter, ServiceKitGetter.new(settings.redis_client)
 set :sales_note_getter, SalesNoteGetter.new(settings.redis_client)
 set :gasket_kit_getter, GasketKitGetter.new(settings.redis_client)
+set :gasket_turbo_getter, GasketTurboGetter.new(settings.redis_client)
 
 
 get '/product/:sku/where_used/' do
@@ -62,5 +63,8 @@ get '/product/:sku/gasket_kit/' do
   response.to_json
 end
 
-
+get '/product/:sku/gasket_turbo/' do
+  response = settings.gasket_turbo_getter.get_gasket_turbo_attribute params[:sku], params[:stats]
+  response.to_json
+end
 

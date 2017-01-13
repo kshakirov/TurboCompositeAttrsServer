@@ -24,6 +24,7 @@ class GasketTurboReader
           part_number: get_oe_part_number(gasket_kit),
           ti_part_number: get_ti_part_number(gasket_kit, interchanges),
           description: gasket_kit.description,
+          manufacturer: gasket_kit.manfr.name,
           prices: nil,
           interchanges: interchanges
 

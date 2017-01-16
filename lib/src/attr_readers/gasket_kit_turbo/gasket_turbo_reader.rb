@@ -10,8 +10,12 @@ class GasketTurboReader
 
   private
   def get_gasket_kit_id id
+    begin
     part = Turbo.find id
     part.gasket_kit_id
+    rescue Exception => e
+      false
+    end
   end
 
   def get_gasket_kit gasket_kit_id
@@ -35,6 +39,9 @@ class GasketTurboReader
 
   public
   def get_attribute id
-    get_gasket_kit(get_gasket_kit_id(id))
+    gasket_kit_id = get_gasket_kit_id(id)
+    if gasket_kit_id
+      get_gasket_kit(gasket_kit_id)
+    end
   end
 end

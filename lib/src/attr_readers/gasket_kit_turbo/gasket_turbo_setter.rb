@@ -4,6 +4,7 @@ class GasketTurboSetter
     @redis_cache = redis_cache
     @price_reader = PriceAttrReader.new(@redis_cache)
   end
+
   private
 
   def add_prices gasket_turbo
@@ -14,11 +15,12 @@ class GasketTurboSetter
   end
 
 
-
   def cache_gasket_turbo sku
     gasket_turbo = @gasket_turbo_reader.get_attribute(sku)
-    add_prices(gasket_turbo)
-    @redis_cache.set_cached_response(sku,  'gasket_turbo',gasket_turbo)
+    if gasket_turbo
+      add_prices(gasket_turbo)
+      @redis_cache.set_cached_response(sku, 'gasket_turbo', gasket_turbo)
+    end
   end
 
   public

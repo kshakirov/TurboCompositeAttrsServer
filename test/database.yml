@@ -17,12 +17,12 @@ staging:
   timeout: 5000
 
 production:
-    adapter: jdbcmysql
-    host: 192.168.42.11
-    database: metadata
-    username: vagrant
-    password: vagrant
-    pool: 5
-    timeout: 5000
+  adapter: jdbcmysql
+  host: 192.99.147.128
+  database: metadata
+  username: metaserver
+  password: metaserver
+  pool: 5
+  timeout: 5000
 
 

@@ -6,7 +6,7 @@ class GasketTurboPriceManager
 
   def add_group_price turbo, id
     group_id = @group_price.prices[id]
-    unless turbo.nil?
+    if turbo
         if  turbo[:prices]
           turbo[:prices] = turbo[:prices][group_id.to_sym]
         end

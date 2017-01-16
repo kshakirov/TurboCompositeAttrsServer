@@ -3,7 +3,9 @@ class ProductsCollection
     @product_cacher = AttributesCacher.new
     @price_cacher = PriceCacher.new
     @kit_matrix_cacher = KitMatrixCacher.new
+    @secondary_attributes_cacher = SecondaryAttributesCacher.new
     @gasket_kit_cacher = GasketKitCacher.new
+
     ActiveRecord::Base.logger = nil
   end
 
@@ -53,5 +55,9 @@ class ProductsCollection
 
   def cache_one_attribute since_id=0, cacher_instance
     _process_products since_id, cacher_instance
+  end
+
+  def cache_secondary_attrs since_id=0
+    _process_products since_id,  @secondary_attributes_cacher
   end
 end

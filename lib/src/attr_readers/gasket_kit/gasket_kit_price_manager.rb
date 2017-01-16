@@ -6,9 +6,9 @@ class GasketKitPriceManager
 
   def add_group_price turbos, id
     group_id = @group_price.prices[id]
-    unless turbos.nil?
+    if turbos
       turbos.each do |value|
-        if  value[:prices]
+        if value[:prices]
           value[:prices] = value[:prices][group_id.to_sym]
         end
       end
@@ -16,7 +16,7 @@ class GasketKitPriceManager
   end
 
   def remove_price turbos
-    unless turbos.nil?
+    if turbos
       turbos.each do |turbo|
         turbo[:prices] = 'login'
       end

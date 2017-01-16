@@ -15,7 +15,7 @@ class GasketTurboPriceManager
   end
 
   def remove_price turbo
-    unless turbo.nil?
+    if turbo
         turbo[:prices] = 'login'
     end
     turbo

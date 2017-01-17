@@ -21,8 +21,10 @@ set :gasket_turbo_getter, GasketTurboGetter.new(settings.redis_client)
 set :sales_notes_batch_getter, SalesNoteBatchGetter.new(settings.redis_client)
 
 
-get '/product/:sku/where_used/' do
-  response = settings.where_used_reader.get_where_used_attribute params[:sku], params[:stats]
+post '/product/:sku/where_used/' do
+  sku = params[:sku]
+  id = JSON.parse(request.body.read)
+  response = settings.where_used_reader.get_where_used_attribute(sku,id[0])
   response.to_json
 end
 

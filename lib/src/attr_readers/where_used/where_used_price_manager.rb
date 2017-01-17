@@ -14,7 +14,7 @@ class WhereUsedPriceManager
   end
 
   def remove_price where_useds
-    if where_useds.nil?
+    unless  where_useds.nil?
       where_useds.each do |key, value|
         where_useds[key][:prices] = 'login'
       end

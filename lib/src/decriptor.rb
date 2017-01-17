@@ -21,7 +21,7 @@ class CustomerInfoDecypher
   def get_customer_group encrypted_info
     info = decypher encrypted_info
     segments = info.split(':')
-    if segments.size < 2
+    if segments.size < 2 or segments[1].include? 'not_authorized'
       'no stats'
     else
       segments[1]

@@ -5,8 +5,18 @@ class SalesNoteSetter
     @redis_cache = redis_cache
   end
 
+  def add_part_number sns, sku
+    if sku
+    part = Part.find sku
+      sns.map{|sn|
+        sn[:part_number] = part.manfr_part_num
+        sn
+      }
+    end
+  end
+
   def cache_sales_note sku
-      sns = @sales_note_reader.get_attribute sku
+      sns = add_part_number(@sales_note_reader.get_attribute(sku), sku)
       @redis_cache.set_cached_response sku, 'sales_note', sns
   end
 

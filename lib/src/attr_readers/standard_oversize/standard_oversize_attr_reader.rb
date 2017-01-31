@@ -10,7 +10,7 @@ class StandardOversizeAttrReader
   private
   def _get_interchanges part_ids
     interchanges = part_ids.map { |id| get_interchange_attribute(id) }
-    interchanges.flatten!.map { |i| i[:id] }
+    interchanges.flatten!
   end
 
   def get_part_type id
@@ -34,7 +34,8 @@ class StandardOversizeAttrReader
       if records and records.size > 0
         parts_ids = records.map { |r| r.oversize_part_id }
         interchanges = _get_interchanges(parts_ids)
-        compare_parts(parts_ids + interchanges, part, part_type)
+        compare_parts(parts_ids.map{|pi| {id: pi}} +
+                          interchanges, part, part_type)
       end
     end
   end

@@ -6,8 +6,13 @@ class TestStdOversize < MiniTest::Unit::TestCase
     @std_oversize_reader = StandardOversizeAttrReader.new
   end
 
-  def test_one
+  def test_jornal_bearing
     parts = @std_oversize_reader.get_attribute(45523)
     refute_nil parts
   end
+
+  # def test_jornal_bearing_spacer
+  #   parts = @std_oversize_reader.get_attribute(45487)
+  #   refute_nil parts
+  # end
 end

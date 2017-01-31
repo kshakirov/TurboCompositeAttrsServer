@@ -1,6 +1,6 @@
 class StandardOversizeAttrReader
-
   extend Forwardable
+  include CompareSizes
   def_delegator :@interchange_getter, :get_interchange_attribute, :get_interchange_attribute
 
   def initialize
@@ -13,40 +13,22 @@ class StandardOversizeAttrReader
     interchanges.flatten!.map { |i| i[:id] }
   end
 
-  def _compare_sizes part, original_part
-    unless original_part.maxOuterDiameter == part.maxOuterDiameter and
-        original_part.minOuterDiameter == part.minOuterDiameter and
-        original_part.maxInnerDiameter == part.maxInnerDiameter and
-        original_part.minInnerDiameter == part.minInnerDiameter
-      return {
-          maxOuterDiameter: original_part.maxOuterDiameter.to_f - part.maxOuterDiameter.to_f,
-          minOuterDiameter: original_part.minOuterDiameter.to_f - part.minOuterDiameter.to_f,
-          minInnerDiameter: original_part.minInnerDiameter.to_f - part.minInnerDiameter.to_f,
-          maxInnerDiameter: original_part.minInnerDiameter.to_f - part.minInnerDiameter.to_f
-      }
-
-    end
-    false
-  end
-
-  def compare_parts ids, original_part, part_type
-    ids.map do |id|
-      part = JournalBearing.find id
-      _compare_sizes(part, original_part)
-    end
-  end
-
-  def get_part_and_type id
+  def get_part_type id
     begin
-      return Part.find(id).part_type.magento_attribute_set.gsub(/\s+/, ""),
-          JournalBearing.find(id)
+      Part.find(id).part_type.magento_attribute_set.gsub(/\s+/, "")
     rescue Exception => e
       nil
     end
   end
 
+  def get_part id, part_type
+    klass = Object.const_get(part_type)
+    klass.find id
+  end
+
   def _get_attribute id
-    part_type, part = get_part_and_type(id)
+    part_type = get_part_type(id)
+    part = get_part(id, part_type)
     unless part_type.nil?
       records = StandardOversizePart.where(standard_part_id: id)
       if records and records.size > 0

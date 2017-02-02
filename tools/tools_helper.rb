@@ -9,6 +9,7 @@ require_relative "../lib/src/tools/kit_matrix_cacher"
 require_relative "../lib/src/tools/gasket_kit_cacher"
 require_relative  "../lib/src/tools/products_collection"
 require_relative  "../lib/src/tools/secondary_attrs_cacher"
+require_relative  "../lib/src/tools/standard_oversize_cacher"
 require 'redis'
 require 'composite_primary_keys'
 require 'logger'

@@ -10,7 +10,7 @@ class StandardOversizeAttrReader
   private
   def _get_interchanges part_ids
     interchanges = part_ids.map { |id| get_interchange_attribute(id) }
-    interchanges.flatten!
+#    interchanges.flatten!
   end
 
   def get_part_type id
@@ -26,16 +26,37 @@ class StandardOversizeAttrReader
     klass.find id
   end
 
+  def couple_origs_interchs interchanges, compared_parts
+    compared_parts.delete(false)
+    compared_parts.each_with_index { |cp, index|
+      cp[:interchanges] = interchanges[index] if cp
+      cp
+    }
+  end
+
+  def create_oversizeds_hashes parts_ids, part, part_type
+    interchanges = _get_interchanges(parts_ids)
+    compared_parts = compare_parts(parts_ids, part, part_type)
+    couple_origs_interchs(interchanges, compared_parts)
+  end
+
+  def prepare_attribute hashes, original_part
+    {
+        table: hashes,
+        original_part: original_part,
+        reference: false
+    }
+  end
+
   def _get_attribute id
     part_type = get_part_type(id)
     part = get_part(id, part_type)
     unless part_type.nil?
       records = StandardOversizePart.where(standard_part_id: id)
       if records and records.size > 0
-        parts_ids = records.map { |r| r.oversize_part_id }
-        interchanges = _get_interchanges(parts_ids)
-        compare_parts(parts_ids.map{|pi| {id: pi}} +
-                          interchanges, part, part_type)
+        prepare_attribute(create_oversizeds_hashes(
+            records.map { |r| r.oversize_part_id }, part, part_type),
+            do_original_part(part, part_type))
       end
     end
   end

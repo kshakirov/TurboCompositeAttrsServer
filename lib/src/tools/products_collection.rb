@@ -5,10 +5,12 @@ class ProductsCollection
     @kit_matrix_cacher = KitMatrixCacher.new
     @secondary_attributes_cacher = SecondaryAttributesCacher.new
     @gasket_kit_cacher = GasketKitCacher.new
+    @std_oversize_cacher = StandardOversizeCacher.new
 
     ActiveRecord::Base.logger = nil
   end
 
+  private
   def _process_products since_id, cacher
     Part.find_each(batch_size: 100) do |p|
       if since_id and since_id < p.id
@@ -29,16 +31,28 @@ class ProductsCollection
     end
   end
 
-  def process_gaskets  cacher
-      GasketKit.all.each  do |gk|
-        puts "Adding Gasket Kit  [#{gk.part_id}]"
-        cacher.put gk.id
-      end
+  def _process_gaskets cacher
+    GasketKit.all.each do |gk|
+      puts "Adding Gasket Kit  [#{gk.part_id}]"
+      cacher.put gk.id
+    end
   end
 
 
+  def _process_std_oversize cacher
+    JournalBearing.all.each do |std|
+      puts "Adding Std Oversize  [#{std.part_id}]"
+      cacher.put std.id
+    end
+    JournalBearingSpacer.all.each do |std|
+      puts "Adding Std Oversize  [#{std.part_id}]"
+      cacher.put std.id
+    end
+  end
+
+  public
   def cache_gasket_kits
-      process_gaskets(@gasket_kit_cacher)
+    _process_gaskets(@gasket_kit_cacher)
   end
 
   def cache_all_attributes since_id
@@ -58,6 +72,11 @@ class ProductsCollection
   end
 
   def cache_secondary_attrs since_id=0
-    _process_products since_id,  @secondary_attributes_cacher
+    _process_products since_id, @secondary_attributes_cacher
   end
+
+  def cache_std_oversize
+    _process_std_oversize(@std_oversize_cacher)
+  end
+
 end

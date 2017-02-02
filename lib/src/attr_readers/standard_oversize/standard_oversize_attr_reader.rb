@@ -9,8 +9,7 @@ class StandardOversizeAttrReader
 
   private
   def _get_interchanges part_ids
-    interchanges = part_ids.map { |id| get_interchange_attribute(id) }
-#    interchanges.flatten!
+    part_ids.map { |id| get_interchange_attribute(id) }
   end
 
   def get_part_type id
@@ -36,6 +35,13 @@ class StandardOversizeAttrReader
 
   def create_oversizeds_hashes parts_ids, part, part_type
     interchanges = _get_interchanges(parts_ids)
+    interchanges.map! do |i|
+      i.map! do |ii|
+        ii[:sku] = ii[:id]
+        ii
+      end
+      i
+    end
     compared_parts = compare_parts(parts_ids, part, part_type)
     couple_origs_interchs(interchanges, compared_parts)
   end
@@ -55,8 +61,8 @@ class StandardOversizeAttrReader
       records = StandardOversizePart.where(standard_part_id: id)
       if records and records.size > 0
         prepare_attribute(create_oversizeds_hashes(
-            records.map { |r| r.oversize_part_id }, part, part_type),
-            do_original_part(part, part_type))
+                              records.map { |r| r.oversize_part_id }, part, part_type),
+                          do_original_part(part, part_type))
       end
     end
   end

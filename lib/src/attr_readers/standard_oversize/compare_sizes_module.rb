@@ -74,25 +74,29 @@ module CompareSizes
     end
   end
 
-  def do_orig_journal_bearing part
+  def do_orig_journal_bearing part, original_part
     {
         maxOuterDiameter: part.maxOuterDiameter.to_f,
         minOuterDiameter: part.minOuterDiameter.to_f,
         minInnerDiameter: part.minInnerDiameter.to_f,
-        maxInnerDiameter: part.minInnerDiameter.to_f
+        maxInnerDiameter: part.minInnerDiameter.to_f,
+        sku: original_part.id,
+        part_number: original_part.manfr_part_num
     }
   end
 
-  def do_orig_journal_bearing_spacer part
+  def do_orig_journal_bearing_spacer part, original_part
       {
           outerDiameterA: part.outerDiameterA.to_f,
-          innerDiameterB: part.innerDiameterB.to_f
+          innerDiameterB: part.innerDiameterB.to_f,
+          sku: original_part.id,
+          part_number: original_part.manfr_part_num
       }
   end
 
-  def do_original_part part, part_type
+  def do_original_part part, part_type, original_part
     method_name = "do_orig_" + part_type.underscore
-    self.send(method_name, part)
+    self.send(method_name, part, original_part)
   end
 
 end

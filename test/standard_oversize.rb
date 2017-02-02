@@ -6,7 +6,6 @@ class TestStdOversize < MiniTest::Unit::TestCase
     @std_oversize_reader = StandardOversizeAttrReader.new
     @std_oversize_setter = StandardOversizeSetter.new
     @std_oversize_getter = StandardOversizeGetter.new
-    @oversize_reader = OversizeAttrReader.new
   end
 
   # def test_jornal_bearing
@@ -16,7 +15,8 @@ class TestStdOversize < MiniTest::Unit::TestCase
   #
   def test_setter_getter
     @std_oversize_setter.set_std_oversize_attribute(45525)
-    attr = @std_oversize_getter.get_standard_oversize 45523
+    attr = @std_oversize_getter.get_standard_oversize 45525
+    p attr
   end
   #
   # def test_getter

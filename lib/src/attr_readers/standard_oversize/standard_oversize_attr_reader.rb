@@ -12,12 +12,12 @@ class StandardOversizeAttrReader
     part_ids.map { |id| get_interchange_attribute(id) }
   end
 
-  def get_part_type id
-    begin
-      Part.find(id).part_type.magento_attribute_set.gsub(/\s+/, "")
-    rescue Exception => e
-      nil
-    end
+  def get_part_type  part
+      part.part_type.magento_attribute_set.gsub(/\s+/, "")
+  end
+
+  def get_original_part id
+    Part.find(id)
   end
 
   def get_part id, part_type
@@ -55,14 +55,15 @@ class StandardOversizeAttrReader
   end
 
   def _get_attribute id
-    part_type = get_part_type(id)
+    original_part = get_original_part(id)
+    part_type = get_part_type(original_part)
     part = get_part(id, part_type)
     unless part_type.nil?
       records = StandardOversizePart.where(standard_part_id: id)
       if records and records.size > 0
         prepare_attribute(create_oversizeds_hashes(
                               records.map { |r| r.oversize_part_id }, part, part_type),
-                          do_original_part(part, part_type))
+                          do_original_part(part, part_type, original_part))
       end
     end
   end

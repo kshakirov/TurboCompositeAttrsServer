@@ -19,6 +19,12 @@ class StandardOversizeSetter
     end
   end
 
+  def process_standard_interchanges standard_oversize
+    standard_oversize[:original_part][:interchanges].each do |i|
+      @redis_cache.set_cached_response(i[:id], 'standard_oversize', standard_oversize)
+    end
+  end
+
   def set_oversizeds oversize, row
     @redis_cache.set_cached_response(oversize[:reference], 'standard_oversize', oversize)
     if row.key? :interchanges
@@ -30,7 +36,10 @@ class StandardOversizeSetter
 
   def cache_standard_oversize sku
     standard_oversize = @standard_oversize_reader.get_attribute(sku)
-    process_oversizeds(standard_oversize) if is_valid_oversize?(standard_oversize)
+    if is_valid_oversize?(standard_oversize)
+      process_oversizeds(standard_oversize)
+      process_standard_interchanges(standard_oversize)
+    end
     unless standard_oversize.nil?
       @redis_cache.set_cached_response(sku, 'standard_oversize', standard_oversize)
     end

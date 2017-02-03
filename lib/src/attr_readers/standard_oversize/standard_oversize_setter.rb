@@ -21,8 +21,10 @@ class StandardOversizeSetter
 
   def set_oversizeds oversize, row
     @redis_cache.set_cached_response(oversize[:reference], 'standard_oversize', oversize)
-    row[:interchanges].each do |int|
-      @redis_cache.set_cached_response(int[:id], 'standard_oversize', oversize)
+    if row.key? :interchanges
+      row[:interchanges].each do |int|
+        @redis_cache.set_cached_response(int[:id], 'standard_oversize', oversize)
+      end
     end
   end
 

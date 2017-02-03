@@ -7,7 +7,7 @@ module CompareSizes
       if hash[key] == 0
         hash[key_n.to_sym] = "STD"
       else
-        hash[key_n] = sprintf( "%0.04f", hash[key])
+        hash[key_n] = sprintf("%0.04f", hash[key])
       end
     }
   end
@@ -86,17 +86,28 @@ module CompareSizes
   end
 
   def do_orig_journal_bearing_spacer part, original_part
-      {
-          outerDiameterA: part.outerDiameterA.to_f,
-          innerDiameterB: part.innerDiameterB.to_f,
-          sku: original_part.id,
-          part_number: original_part.manfr_part_num
-      }
+    {
+        outerDiameterA: part.outerDiameterA.to_f,
+        innerDiameterB: part.innerDiameterB.to_f,
+        sku: original_part.id,
+        part_number: original_part.manfr_part_num
+    }
+  end
+
+  def map_interchanges sku
+    interchanges = get_interchange_attribute(sku)
+    interchanges.map { |i|
+      i[:sku] = i[:id]
+      i
+    }
+
   end
 
   def do_original_part part, part_type, original_part
     method_name = "do_orig_" + part_type.underscore
-    self.send(method_name, part, original_part)
+    original_part_hash = self.send(method_name, part, original_part)
+    original_part_hash[:interchanges] = map_interchanges(original_part.id)
+    original_part_hash
   end
 
 end

@@ -9,7 +9,7 @@ class TestStdOversize < MiniTest::Unit::TestCase
   end
 
   # def test_jornal_bearing
-  #   parts = @std_oversize_reader.get_attribute(45526)
+  #   parts = @std_oversize_reader.get_attribute(45525)
   #   refute_nil parts
   # end
   #

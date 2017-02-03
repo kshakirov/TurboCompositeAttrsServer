@@ -81,3 +81,18 @@ class GasketKit < ActiveRecord::Base
   self.table_name ='gasket_kit'
   self.primary_key = "part_id"
 end
+
+class StandardOversizePart < ActiveRecord::Base
+  self.table_name ='standard_oversize_part'
+#  self.primary_key = :standard_oversize_part_id, :oversize_part_id
+end
+
+class JournalBearing < ActiveRecord::Base
+  self.table_name ='journal_bearing'
+  self.primary_key = "part_id"
+end
+
+class JournalBearingSpacer < ActiveRecord::Base
+  self.table_name ='journal_bearing_spacer'
+  self.primary_key = "part_id"
+end

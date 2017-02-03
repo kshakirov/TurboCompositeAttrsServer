@@ -19,6 +19,7 @@ set :sales_note_getter, SalesNoteGetter.new(settings.redis_client)
 set :gasket_kit_getter, GasketKitGetter.new(settings.redis_client)
 set :gasket_turbo_getter, GasketTurboGetter.new(settings.redis_client)
 set :sales_notes_batch_getter, SalesNoteBatchGetter.new(settings.redis_client)
+set :standard_oversize_getter, StandardOversizeGetter.new(settings.redis_client)
 
 
 post '/product/:sku/where_used/' do
@@ -74,6 +75,11 @@ end
 post '/product/sales_notes/' do
   skus = JSON.parse(request.body.read)
   response = settings.sales_notes_batch_getter.get_sales_note_attributes skus
+  response.to_json
+end
+
+get '/product/:sku/standard_oversize/' do
+  response = settings.standard_oversize_getter.get_standard_oversize params[:sku]
   response.to_json
 end
 

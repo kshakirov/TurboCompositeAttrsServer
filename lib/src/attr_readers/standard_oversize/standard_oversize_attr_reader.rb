@@ -63,9 +63,11 @@ class StandardOversizeAttrReader
       if is_interchange_ti? cp
         cp[:interchanges] = interchanges[index] if cp
       else
-        replace_interchange_ti(cp, interchanges[index]) if cp
+        #replace_interchange_ti(cp, interchanges[index]) if cp
+        cp[:remove] = true
       end
     end
+    compared_parts.delete_if{|cp| cp.key? :remove}
   end
 
   def create_oversizeds_hashes parts_ids, part, part_type

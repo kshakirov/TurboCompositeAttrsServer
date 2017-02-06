@@ -79,7 +79,7 @@ module CompareSizes
         maxOuterDiameter: part.maxOuterDiameter.to_f,
         minOuterDiameter: part.minOuterDiameter.to_f,
         minInnerDiameter: part.minInnerDiameter.to_f,
-        maxInnerDiameter: part.minInnerDiameter.to_f,
+        maxInnerDiameter: part.maxInnerDiameter.to_f,
         sku: original_part.id,
         part_number: original_part.manfr_part_num
     }

@@ -29,10 +29,10 @@ module CompareSizes
 
   def prepare_sizes_hash_jb part, original_part
     {
-        maxOuterDiameter: original_part.maxOuterDiameter.to_f - part.maxOuterDiameter.to_f,
-        minOuterDiameter: original_part.minOuterDiameter.to_f - part.minOuterDiameter.to_f,
-        minInnerDiameter: original_part.minInnerDiameter.to_f - part.minInnerDiameter.to_f,
-        maxInnerDiameter: original_part.minInnerDiameter.to_f - part.minInnerDiameter.to_f
+        maxOuterDiameter: (original_part.maxOuterDiameter.to_f - part.maxOuterDiameter.to_f).round(4).abs,
+        minOuterDiameter: (original_part.minOuterDiameter.to_f - part.minOuterDiameter.to_f).round(4).abs,
+        minInnerDiameter: (original_part.minInnerDiameter.to_f - part.minInnerDiameter.to_f).round(4),
+        maxInnerDiameter: (original_part.maxInnerDiameter.to_f - part.maxInnerDiameter.to_f).round(4)
     }
   end
 
@@ -76,10 +76,10 @@ module CompareSizes
 
   def do_orig_journal_bearing part, original_part
     {
-        maxOuterDiameter: part.maxOuterDiameter.to_f,
-        minOuterDiameter: part.minOuterDiameter.to_f,
-        minInnerDiameter: part.minInnerDiameter.to_f,
-        maxInnerDiameter: part.minInnerDiameter.to_f,
+        maxOuterDiameter: part.maxOuterDiameter.to_f.round(4),
+        minOuterDiameter: part.minOuterDiameter.to_f.round(4),
+        minInnerDiameter: part.minInnerDiameter.to_f.round(4),
+        maxInnerDiameter: part.maxInnerDiameter.to_f.round(4),
         sku: original_part.id,
         part_number: original_part.manfr_part_num
     }

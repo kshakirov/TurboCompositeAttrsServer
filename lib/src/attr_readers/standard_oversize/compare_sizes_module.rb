@@ -80,6 +80,7 @@ module CompareSizes
         minOuterDiameter: part.minOuterDiameter.to_f.round(4),
         minInnerDiameter: part.minInnerDiameter.to_f.round(4),
         maxInnerDiameter: part.maxInnerDiameter.to_f.round(4),
+        width: part.length.to_f.round(4),
         sku: original_part.id,
         part_number: original_part.manfr_part_num
     }

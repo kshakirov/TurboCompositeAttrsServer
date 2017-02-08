@@ -67,7 +67,7 @@ class StandardOversizeAttrReader
         cp[:remove] = true
       end
     end
-    compared_parts.delete_if{|cp| cp.key? :remove}
+    compared_parts.delete_if { |cp| cp.key? :remove }
   end
 
   def create_oversizeds_hashes parts_ids, part, part_type
@@ -105,9 +105,19 @@ class StandardOversizeAttrReader
     end
   end
 
+  def _sort_by_multiple_fields table
+    table.sort_by do |row|
+      [row[:maxOuterDiameter], row[:maxInnerDiameter], row[:part_number]]
+    end
+  end
+
   public
   def get_attribute id
-    _get_attribute(id)
+    hashe =_get_attribute(id)
+    if not hashe.nil? and hashe.has_key? :table and not hashe[:table].nil?
+      hashe[:table] = _sort_by_multiple_fields(hashe[:table])
+    end
+    hashe
   end
 
 end

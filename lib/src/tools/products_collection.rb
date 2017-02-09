@@ -25,7 +25,7 @@ class ProductsCollection
     Part.find_in_batches(start: since_id, batch_size: 100) do |group|
       ids = []
       group.each { |part| ids.push part.id }
-      puts "#{counter * 100} products to cache prices"
+      puts "#{counter * 100} products to cache prices, starting id => #{group.first.id}"
       @price_cacher.put ids
       counter += 1
     end

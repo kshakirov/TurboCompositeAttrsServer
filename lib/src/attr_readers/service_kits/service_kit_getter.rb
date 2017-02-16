@@ -11,12 +11,11 @@ class ServiceKitGetter
   end
 
   def get_service_kit_attribute sku, id
-    group_id = @decriptor.get_customer_group id
     service_kits = get_cached_sk sku
-    if group_id=='no stats'
+    if id=='not_authorized'
       @price_manager.remove_sk_price service_kits
     else
-      @price_manager.add_group_price service_kits, group_id
+      @price_manager.add_group_price service_kits, id
     end
   end
 end

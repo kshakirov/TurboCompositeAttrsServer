@@ -10,12 +10,11 @@ class WhereUsedGetter
   end
 
   def get_where_used_attribute sku, id
-    group_id = @decriptor.get_customer_group id
     wus = get_cached_where_used sku
-    if group_id=='no stats'
+    if id=='not_authorized'
       @price_manager.remove_price wus
     else
-      @price_manager.add_group_price wus, group_id
+      @price_manager.add_group_price wus, id
     end
   end
 end

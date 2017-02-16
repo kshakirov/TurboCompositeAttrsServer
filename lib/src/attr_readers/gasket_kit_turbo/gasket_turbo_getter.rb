@@ -15,12 +15,11 @@ class GasketTurboGetter
   end
 
   def get_gasket_turbo_with_prices sku, id
-    group_id = get_customer_group(id)
     turbos = get_cached_gasket_turbo(sku)
-    if group_id=='no stats'
+    if id=='not_authorized'
       remove_price(turbos)
     else
-      add_group_price(turbos, group_id)
+      add_group_price(turbos, id)
     end
   end
 

@@ -1,0 +1,11 @@
+test:
+  rabbit_host:  '10.0.3.96'
+
+development:
+  rabbit_host:  '10.0.3.96'
+
+staging:
+  rabbit_host:  'localhost'
+
+production:
+  rabbit_host:  'localhost'

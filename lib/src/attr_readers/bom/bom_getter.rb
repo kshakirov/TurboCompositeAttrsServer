@@ -17,12 +17,11 @@ class BomGetter
   end
 
   def _get_bom_with_prices sku, id
-    group_id = get_customer_group(id)
     boms = get_cached_bom(sku, 'bom')
-    if group_id=='no stats'
+    if id=='not_authorized'
       remove_bom_price(boms)
     else
-      add_group_price(boms, group_id)
+      add_group_price(boms, id)
     end
   end
 

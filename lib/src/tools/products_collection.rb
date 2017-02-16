@@ -23,10 +23,11 @@ class ProductsCollection
   def _process_products_in_batch since_id
     counter = 1
     Part.find_in_batches(start: since_id, batch_size: 100) do |group|
-      ids = []
-      group.each { |part| ids.push part.id }
-      puts "#{counter * 100} products to cache prices, starting id => #{group.first.id}"
-      @price_cacher.put ids
+      ids =  group.select{|part|  part.manfr.name == 'Turbo International' }
+      puts "#{counter } - [#{ids.size}] products to cache prices, starting id => #{group.first.id}"
+      if ids and ids.size > 0
+        @price_cacher.put ids.map{|part| part.id}
+      end
       counter += 1
     end
   end

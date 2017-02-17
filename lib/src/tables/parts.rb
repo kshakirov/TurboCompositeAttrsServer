@@ -96,3 +96,7 @@ class JournalBearingSpacer < ActiveRecord::Base
   self.table_name ='journal_bearing_spacer'
   self.primary_key = "part_id"
 end
+
+class PartAudit < ActiveRecord::Base
+
+end

@@ -122,6 +122,7 @@ class StandardOversizeAttrReader
     if not hash.nil? and hash.has_key? :table and not hash[:table].nil?
       hash[:table] = _sort_by_multiple_fields(hash[:table])
     end
+    ActiveRecord::Base.clear_active_connections!
     hash
   end
 

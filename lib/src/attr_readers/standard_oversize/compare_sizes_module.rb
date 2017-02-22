@@ -1,17 +1,14 @@
 module CompareSizes
-
-
   def add_out_col hash
     hash.keys.map { |key|
       key_n = key.to_s + "_out"
-      if hash[key] == 0
+      if hash[key] == 0 or hash[key].nil?
         hash[key_n.to_sym] = "STD"
       else
         hash[key_n] = sprintf("%0.04f", hash[key])
       end
     }
   end
-
 
   def query_part_attrs hash, part
     part = Part.find part.part_id
@@ -21,7 +18,6 @@ module CompareSizes
     hash[:sku] = part.id
     hash
   end
-
 
   def prepare_response id, part
     query_part_attrs(id, part)
@@ -36,7 +32,6 @@ module CompareSizes
     }
   end
 
-
   def prepare_sizes_hash_jbs part, original_part
     {
         outerDiameterA: original_part.outerDiameterA.to_f - part.outerDiameterA.to_f,
@@ -44,13 +39,14 @@ module CompareSizes
     }
   end
 
-
   def _cmp_journal_bearing part, original_part
     unless original_part.maxOuterDiameter == part.maxOuterDiameter and
         original_part.minOuterDiameter == part.minOuterDiameter and
         original_part.maxInnerDiameter == part.maxInnerDiameter and
         original_part.minInnerDiameter == part.minInnerDiameter
-      return prepare_response(prepare_sizes_hash_jb(part, original_part), part)
+      hashes = prepare_sizes_hash_jb(part, original_part)
+      custom_round_journal_bearing(hashes)
+      return prepare_response(hashes, part)
 
     end
     false

@@ -57,13 +57,12 @@ class StandardOversizeAttrReader
     end
   end
 
-  def couple_origs_interchs interchanges, compared_parts
+  def couple_orig_interch interchanges, compared_parts
     compared_parts.delete(false)
     compared_parts.each_with_index do |cp, index|
       if is_interchange_ti? cp
         cp[:interchanges] = interchanges[index] if cp
       else
-        #replace_interchange_ti(cp, interchanges[index]) if cp
         cp[:remove] = true
       end
     end
@@ -80,7 +79,7 @@ class StandardOversizeAttrReader
       i
     end
     compared_parts = compare_parts(parts_ids, part, part_type)
-    couple_origs_interchs(interchanges, compared_parts)
+    couple_orig_interch(interchanges, compared_parts)
   end
 
   def prepare_attribute hashes, original_part
@@ -91,18 +90,24 @@ class StandardOversizeAttrReader
     }
   end
 
+  def prepare_table id, part, part_type, original_part
+    unless part_type.nil?
+      records = StandardOversizePart.where(standard_part_id: id)
+      if records and records.size > 0
+        hashes = create_oversizeds_hashes(
+            records.map { |r| r.oversize_part_id }, part, part_type)
+        original_part = do_original_part(part, part_type, original_part)
+        prepare_attribute(hashes, original_part)
+      end
+    end
+  end
+
   def _get_attribute id
     original_part = get_original_part(id)
     part_type = get_part_type(original_part)
     part = get_part(id, part_type)
-    unless part_type.nil?
-      records = StandardOversizePart.where(standard_part_id: id)
-      if records and records.size > 0
-        prepare_attribute(create_oversizeds_hashes(
-                              records.map { |r| r.oversize_part_id }, part, part_type),
-                          do_original_part(part, part_type, original_part))
-      end
-    end
+    prepare_table(id, part, part_type, original_part)
+
   end
 
   def _sort_by_multiple_fields table
@@ -113,11 +118,11 @@ class StandardOversizeAttrReader
 
   public
   def get_attribute id
-    hashe =_get_attribute(id)
-    if not hashe.nil? and hashe.has_key? :table and not hashe[:table].nil?
-      hashe[:table] = _sort_by_multiple_fields(hashe[:table])
+    hash =_get_attribute(id)
+    if not hash.nil? and hash.has_key? :table and not hash[:table].nil?
+      hash[:table] = _sort_by_multiple_fields(hash[:table])
     end
-    hashe
+    hash
   end
 
 end

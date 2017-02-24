@@ -92,6 +92,12 @@ class JournalBearing < ActiveRecord::Base
   self.primary_key = "part_id"
 end
 
+class PistonRing < ActiveRecord::Base
+  self.inheritance_column = nil
+  self.table_name ='piston_ring'
+  self.primary_key = "part_id"
+end
+
 class JournalBearingSpacer < ActiveRecord::Base
   self.table_name ='journal_bearing_spacer'
   self.primary_key = "part_id"

@@ -1,11 +1,12 @@
 require_relative '../mappers_helper'
+require_relative 'standard_oversize_celluloid'
 
 def make_future id
   @std_ovrsize_worker.future.set_std_oversize_attribute(id)
 end
 
 def map_specific_parts
-  Part.joins(:part_type).where(part_type: {name: ['Journal Bearing', 'Journal Bearing Spacer']}).
+  Part.joins(:part_type).where(part_type: {name: ['Journal Bearing', 'Journal Bearing Spacer', 'Piston Ring']}).
       map do |part|
     puts "Created Future for [#{part.id}]"
     make_future(part.id)

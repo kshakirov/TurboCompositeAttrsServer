@@ -13,4 +13,10 @@ class TestInterchangeAttrsReader < MiniTest::Unit::TestCase
     assert_equal 4, attrs.size
     assert_equal 1983, attrs[1][:id]
   end
+
+  def test_reader
+    reader = InterchangeReader.new
+    interchanges = reader.get_attribute(70793)
+    refute_nil interchanges
+  end
 end

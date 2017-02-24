@@ -32,6 +32,14 @@ module CompareSizes
     }
   end
 
+  def prepare_sizes_hash_pr part, original_part
+    {
+        installedDiameterA: (original_part.installedDiameterA.to_f - part.installedDiameterA.to_f).round(4).abs,
+        gapBInstalledDiameter: (original_part.gapBInstalledDiameter.to_f - part.gapBInstalledDiameter.to_f).round(4).abs,
+        widthD: (original_part.widthD.to_f - part.widthD.to_f).round(4),
+    }
+  end
+
   def prepare_sizes_hash_jbs part, original_part
     {
         outerDiameterA: original_part.outerDiameterA.to_f - part.outerDiameterA.to_f,
@@ -47,7 +55,6 @@ module CompareSizes
       hashes = prepare_sizes_hash_jb(part, original_part)
       custom_round_journal_bearing(hashes)
       return prepare_response(hashes, part)
-
     end
     false
   end
@@ -57,6 +64,17 @@ module CompareSizes
         original_part.innerDiameterB == part.innerDiameterB
       return prepare_response(prepare_sizes_hash_jbs(part, original_part), part_hash)
 
+    end
+    false
+  end
+
+  def _cmp_piston_ring part, original_part
+    unless original_part.installedDiameterA == part.installedDiameterA and
+        original_part.gapBInstalledDiameter == part.gapBInstalledDiameter and
+        original_part.widthD == part.widthD
+      hashes = prepare_sizes_hash_pr(part, original_part)
+      custom_round_journal_bearing(hashes)
+      return prepare_response(hashes, part)
     end
     false
   end
@@ -86,6 +104,16 @@ module CompareSizes
     {
         outerDiameterA: part.outerDiameterA.to_f,
         innerDiameterB: part.innerDiameterB.to_f,
+        sku: original_part.id,
+        part_number: original_part.manfr_part_num
+    }
+  end
+
+  def do_orig_piston_ring  part, original_part
+    {
+        installedDiameterA: part.installedDiameterA.to_f,
+        gapBInstalledDiameter: part.gapBInstalledDiameter.to_f,
+        widthD: part.widthD.to_f,
         sku: original_part.id,
         part_number: original_part.manfr_part_num
     }

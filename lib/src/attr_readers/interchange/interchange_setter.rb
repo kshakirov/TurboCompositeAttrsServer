@@ -27,7 +27,5 @@ class InterchangeSetter
 
   def set_interchange_attribute sku
     cache_interchange sku
-    ActiveRecord::Base.clear_active_connections!
-    "Sku [#{sku}]  Interchange Future Finished"
   end
 end

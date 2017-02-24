@@ -7,9 +7,8 @@ require 'redis'
 require 'composite_primary_keys'
 require 'logger'
 require_relative "../lib/server.rb"
-ENV['RACK_ENV'] = 'production'
 configuration = YAML::load(IO.read(__dir__ + '/price/database.yml'))
 @connection = ActiveRecord::Base.establish_connection(configuration[ENV['RACK_ENV']])
-@connection.checkout_timeout = 100
+@connection.checkout_timeout = 10
 @logger = Logger.new(__dir__ + '../../logs/cron.log')
 @logger.level =Logger::INFO

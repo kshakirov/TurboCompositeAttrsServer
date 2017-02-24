@@ -1,5 +1,4 @@
 class InterchangeSetter
-
   def initialize redis_cache=RedisCache.new(Redis.new(:host => "redis", :db => 3))
     @interchange_reader = InterchangeReader.new
     @redis_cache = redis_cache
@@ -28,6 +27,7 @@ class InterchangeSetter
 
   def set_interchange_attribute sku
     cache_interchange sku
-
+    ActiveRecord::Base.clear_active_connections!
+    "Sku [#{sku}]  Interchange Future Finished"
   end
 end

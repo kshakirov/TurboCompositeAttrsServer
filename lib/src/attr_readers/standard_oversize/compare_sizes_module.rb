@@ -36,7 +36,7 @@ module CompareSizes
     {
         installedDiameterA: (original_part.installedDiameterA.to_f - part.installedDiameterA.to_f).round(4).abs,
         gapBInstalledDiameter: (original_part.gapBInstalledDiameter.to_f - part.gapBInstalledDiameter.to_f).round(4).abs,
-        widthD: (original_part.widthD.to_f - part.widthD.to_f).round(4),
+        widthD: ( part.widthD.to_f - original_part.widthD.to_f).round(4),
     }
   end
 

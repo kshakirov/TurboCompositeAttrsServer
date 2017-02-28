@@ -1,6 +1,7 @@
 class StandardOversizeAttrReader
   extend Forwardable
   include CompareSizes
+  include CustomSort
   def_delegator :@interchange_getter, :get_interchange_attribute, :get_interchange_attribute
 
   def initialize
@@ -106,7 +107,7 @@ class StandardOversizeAttrReader
     original_part = get_original_part(id)
     part_type = get_part_type(original_part)
     part = get_part(id, part_type)
-    prepare_table(id, part, part_type, original_part)
+    return prepare_table(id, part, part_type, original_part), part_type
 
   end
 
@@ -118,12 +119,11 @@ class StandardOversizeAttrReader
 
   public
   def get_attribute id
-    hash =_get_attribute(id)
+    hash, part_type =_get_attribute(id)
     if not hash.nil? and hash.has_key? :table and not hash[:table].nil?
-      hash[:table] = _sort_by_multiple_fields(hash[:table])
+      hash[:table] = custom_sort(part_type, hash[:table])
     end
-    ActiveRecord::Base.clear_active_connections!
-    hash
+    hashe
   end
 
 end

@@ -1,6 +1,4 @@
 module CompareSizes
-
-
   def add_out_col hash
     hash.keys.map { |key|
       key_n = key.to_s + "_out"
@@ -12,7 +10,6 @@ module CompareSizes
     }
   end
 
-
   def query_part_attrs hash, part
     part = Part.find part.part_id
     add_out_col(hash)
@@ -21,7 +18,6 @@ module CompareSizes
     hash[:sku] = part.id
     hash
   end
-
 
   def prepare_response id, part
     query_part_attrs(id, part)
@@ -40,7 +36,7 @@ module CompareSizes
     {
         installedDiameterA: (original_part.installedDiameterA.to_f - part.installedDiameterA.to_f).round(4).abs,
         gapBInstalledDiameter: (original_part.gapBInstalledDiameter.to_f - part.gapBInstalledDiameter.to_f).round(4).abs,
-        widthD: (original_part.widthD.to_f - part.widthD.to_f).round(4),
+        widthD: ( part.widthD.to_f - original_part.widthD.to_f).round(4),
     }
   end
 
@@ -50,7 +46,6 @@ module CompareSizes
         innerDiameterB: original_part.innerDiameterB.to_f - part.innerDiameterB.to_f
     }
   end
-
 
   def _cmp_journal_bearing part, original_part
     unless original_part.maxOuterDiameter == part.maxOuterDiameter and

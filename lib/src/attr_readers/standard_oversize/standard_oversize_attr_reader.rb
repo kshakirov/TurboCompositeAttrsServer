@@ -123,7 +123,7 @@ class StandardOversizeAttrReader
     if not hash.nil? and hash.has_key? :table and not hash[:table].nil?
       hash[:table] = custom_sort(part_type, hash[:table])
     end
-    hashe
+    hash
   end
 
 end

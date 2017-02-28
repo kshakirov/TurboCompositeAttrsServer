@@ -7,7 +7,7 @@ development:
   pool: 10
   timeout: 20000
 
-production:
+staging:
   adapter: jdbcmysql
   host: 192.99.147.128
   database: metadata
@@ -16,13 +16,13 @@ production:
   pool: 10
   timeout: 30000
 
-staging:
+production:
   adapter: jdbcmysql
-  host: metaserverdb1.cslctedjmc6k.us-east-1.rds.amazonaws.com
+  host: 10.0.3.1
   database: metadata
   username: metaserver
-  password: L535X'twf8zk=4x
+  password: metaserver
   pool: 10
-  timeout: 20000
+  timeout: 30000
 
 

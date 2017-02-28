@@ -123,6 +123,7 @@ class StandardOversizeAttrReader
     if not hash.nil? and hash.has_key? :table and not hash[:table].nil?
       hash[:table] = custom_sort(part_type, hash[:table])
     end
+    ActiveRecord::Base.clear_active_connections!
     hash
   end
 

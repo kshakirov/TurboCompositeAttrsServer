@@ -16,7 +16,7 @@ class TestInterchangeAttrsReader < MiniTest::Unit::TestCase
 
   def test_reader
     reader = InterchangeReader.new
-    interchanges = reader.get_attribute(70793)
-    refute_nil interchanges
+    interchanges = reader.get_attribute(6661)
+    assert_equal 0, interchanges.size
   end
 end

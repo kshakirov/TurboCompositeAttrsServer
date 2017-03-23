@@ -4,7 +4,7 @@ module TurboUtils
   end
 
   def get_ti_interchange interchanges
-    interchanges.find{|i| i[:manufacturer] == "Turbo International" } if interchanges.class.name == "Array"
+    interchanges.find { |i| i[:manufacturer] == "Turbo International" } if interchanges.class.name == "Array"
   end
 
   def get_ti_part_number part, interchanges
@@ -29,13 +29,20 @@ module TurboUtils
     end
   end
 
-  def rid_of_ti_interchange t , interchanges
+  def rid_of_ti_interchange t, interchanges
     if t[:id] and t[:ti_id] and interchanges
-      interchanges.delete_at(interchanges.index{|i| i[:id] == t[:ti_id]} || li.length)
-      t[:interchanges] =  interchanges
+      interchanges.delete_at(interchanges.index { |i| i[:id] == t[:ti_id] } || li.length)
+      t[:interchanges] = interchanges
     end
     t
   end
 
-
+  def prepare_manufacturers
+    manfrs = Manfr.where not_external: true
+    if manfrs
+      manfrs.map { |m| m.name }
+    else
+      []
+    end
+  end
 end

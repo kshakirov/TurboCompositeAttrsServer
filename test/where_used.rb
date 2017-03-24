@@ -19,4 +19,11 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
 
   end
 
+  def test_reader
+    reader = WhereUsedAttrReader.new
+    res = reader.get_attribute  6242
+    assert res.size > 0
+  end
+
+
  end

@@ -2,10 +2,17 @@ class StandardOversizeAttrReader
   extend Forwardable
   include CompareSizes
   include CustomSort
+  include TurboUtils
+
+  def is_external_manufacturer? manufacturer_name
+    @not_external.index manufacturer_name
+  end
+
   def_delegator :@interchange_getter, :get_interchange_attribute, :get_interchange_attribute
 
   def initialize
     @interchange_getter = InterchangeGetter.new
+    @not_external = prepare_manufacturers
   end
 
   private
@@ -105,10 +112,12 @@ class StandardOversizeAttrReader
 
   def _get_attribute id
     original_part = get_original_part(id)
-    part_type = get_part_type(original_part)
-    part = get_part(id, part_type)
-    return prepare_table(id, part, part_type, original_part), part_type
-
+    unless is_external_manufacturer?(original_part.manfr.name)
+      part_type = get_part_type(original_part)
+      part = get_part(id, part_type)
+      return prepare_table(id, part, part_type, original_part), part_type
+    end
+    nil
   end
 
   def _sort_by_multiple_fields table

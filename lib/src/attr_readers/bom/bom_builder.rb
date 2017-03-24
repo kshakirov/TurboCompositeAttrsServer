@@ -1,7 +1,13 @@
 class BomBuilder
+  include TurboUtils
+
+  def is_external_manufacturer? manufacturer_name
+    @not_external.index manufacturer_name
+  end
 
   def initialize
     @interchanges_getter = InterchangeGetter.new
+    @not_external = prepare_manufacturers
   end
 
   def is_ti_manufacturer part
@@ -64,7 +70,7 @@ class BomBuilder
   def find_all_non_ti_interchanges sku
     interchanges = @interchanges_getter.get_cached_interchange(sku)
     if interchanges
-      ins = interchanges.select {|i| not is_int_ti_manufacturer(i) }
+      ins = interchanges.select { |i| not is_int_ti_manufacturer(i) }
       return ins.map { |i| {part_number: i[:part_number], sku: i[:id]} }
     end
     []
@@ -109,10 +115,12 @@ class BomBuilder
     boms_list = boms.select { |b| is_type_direct?(b) }
     boms_list.map do |bl|
       part = Part.find bl['descendant_sku']
-      if is_ti_manufacturer(part)
-        build_boms_list_item_ti(bl, part)
-      else
-        build_boms_list_item_oem(bl, part)
+      unless is_external_manufacturer?(part.manfr.name)
+        if is_ti_manufacturer(part)
+          build_boms_list_item_ti(bl, part)
+        else
+          build_boms_list_item_oem(bl, part)
+        end
       end
     end
   end

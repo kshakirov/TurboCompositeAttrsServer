@@ -3,11 +3,11 @@ require_relative 'tools_helper'
 class SingleAttributeCacher
   def initialize
     redis_client = RedisCache.new(Redis.new(:host => "redis", :db => 3))
-    @single_attribute_setter = SalesNoteSetter.new redis_client
+    @single_attribute_setter = InterchangeSetter.new redis_client
   end
 
   def put sku
-    @single_attribute_setter.set_sales_note_attribute   sku
+    @single_attribute_setter.set_interchange_attribute   sku
   end
 end
 

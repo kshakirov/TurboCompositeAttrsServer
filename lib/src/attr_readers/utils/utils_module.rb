@@ -39,11 +39,11 @@ module TurboUtils
 
   def prepare_manufacturers
     manfrs = Manfr.where not_external: true
+    externals = []
     if manfrs
-      manfrs.map { |m| m.name }
-    else
-      []
+     externals = manfrs.map { |m| m.name }
     end
     ActiveRecord::Base.clear_active_connections!
+    externals
   end
 end

@@ -12,6 +12,7 @@ def map_specific_parts
     puts "Created Future for [#{part.id}]"
     make_future(part.id)
   end
+  ActiveRecord::Base.clear_active_connections!
 end
 
 def remove_resolved_futures futures

@@ -44,5 +44,6 @@ module TurboUtils
     else
       []
     end
+    ActiveRecord::Base.clear_active_connections!
   end
 end

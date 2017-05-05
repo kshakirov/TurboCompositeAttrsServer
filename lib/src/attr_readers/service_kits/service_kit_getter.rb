@@ -12,7 +12,7 @@ class ServiceKitGetter
 
   def get_service_kit_attribute sku, id
     service_kits = get_cached_sk sku
-    if id=='not_authorized'
+    if id=='not_authorized' or id.nil?
       @price_manager.remove_sk_price service_kits
     else
       @price_manager.add_group_price service_kits, id

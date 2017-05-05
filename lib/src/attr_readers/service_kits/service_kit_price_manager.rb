@@ -13,7 +13,7 @@ class ServiceKitPriceManager
   end
 
   def remove_sk_price sks
-    unless sks.nil?
+    if sks
       sks.each_with_index do |value,index|
         sks[index][:prices] = 'login'
       end

@@ -16,6 +16,8 @@ module TurboCompositeAttrs
   end
 
   def get_boms_ids bom_list
+    bom_list.compact!
     bom_list.map{ |b| b[:sku] }
+
   end
 end

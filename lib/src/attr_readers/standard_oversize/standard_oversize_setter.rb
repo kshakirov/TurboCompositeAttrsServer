@@ -1,5 +1,4 @@
 class StandardOversizeSetter
-  include Celluloid
   def initialize redis_cache=RedisCache.new(Redis.new(:host => "redis", :db => 3))
     @standard_oversize_reader = StandardOversizeAttrReader.new
     @redis_cache = redis_cache

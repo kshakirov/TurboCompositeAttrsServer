@@ -18,7 +18,7 @@ class BomGetter
 
   def _get_bom_with_prices sku, id
     boms = get_cached_bom(sku, 'bom')
-    if id=='not_authorized'
+    if id=='not_authorized' or id.nil?
       remove_bom_price(boms)
     else
       add_group_price(boms, id)

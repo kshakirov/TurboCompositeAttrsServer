@@ -11,7 +11,7 @@ class WhereUsedGetter
 
   def get_where_used_attribute sku, id
     wus = get_cached_where_used sku
-    if id=='not_authorized'
+    if id.nil?
       @price_manager.remove_price wus
     else
       @price_manager.add_group_price wus, id

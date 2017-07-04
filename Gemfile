@@ -13,3 +13,4 @@ gem 'puma'
 gem 'jwt'
 gem 'celluloid'
 gem "march_hare", "~> 3.0"
+gem "arangorb"

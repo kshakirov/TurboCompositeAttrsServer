@@ -32,5 +32,6 @@ end
 
 class VbomDescendant < ActiveRecord::Base
   self.inheritance_column = nil
+  self.primary_key = 'id'
   self.table_name = 'vbom_descendant'
 end

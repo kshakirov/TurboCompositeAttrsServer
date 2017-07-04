@@ -1,4 +1,3 @@
-ENV['RACK_ENV'] = 'development'
 require_relative '../mappers_helper'
 require 'arangorb'
 
@@ -94,15 +93,19 @@ class TestGraph
   end
 
   def create_edge vertex_parent, vertex_child
-    #key = " #{vertex_parent.key}_#{vertex_child.key} "
-    body = {
+    e_key = vertex_parent.key.to_i.to_s  + "_"  + vertex_child.key.to_i.to_s
+    e_body = {
         type: "direct"
     }
-    ArangoDocument.create_edge body: body,
-                               from: vertex_parent,
-                               to: vertex_child,
-                               database: "Bom",
-                               collection: "bom_edges"
+
+    edge = ArangoDocument.new key: e_key,
+                              body: e_body,
+                                from: vertex_parent,
+                                to: vertex_child,
+                                database: "Bom",
+                                collection: "bom_edges"
+    edge.creates
+
   end
 
   def add_2_graph vbom_desc_recored

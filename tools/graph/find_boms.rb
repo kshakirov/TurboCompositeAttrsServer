@@ -29,6 +29,7 @@ end
 
 
 check = CheckCorrect.new
+
 while true do
   puts "Enter Parent Id "
   id = gets

@@ -92,10 +92,10 @@ class TestGraph
     find_vertex part_id
   end
 
-  def create_edge vertex_parent, vertex_child
+  def create_edge vertex_parent, vertex_child, type="direct"
     e_key = vertex_parent.key.to_i.to_s  + "_"  + vertex_child.key.to_i.to_s
     e_body = {
-        type: "direct"
+        type: type
     }
 
     edge = ArangoDocument.new key: e_key,
@@ -104,14 +104,14 @@ class TestGraph
                                 to: vertex_child,
                                 database: "Bom",
                                 collection: "bom_edges"
-    edge.creates
+    edge.create
 
   end
 
   def add_2_graph vbom_desc_recored
     vertex_child = add_child_vertex vbom_desc_recored.part_id_descendant
     vertex_parent = add_parent_vertex vbom_desc_recored.part_id_ancestor
-    create_edge vertex_parent, vertex_child
+    create_edge vertex_parent, vertex_child, vbom_desc_recored.type
   end
 
 

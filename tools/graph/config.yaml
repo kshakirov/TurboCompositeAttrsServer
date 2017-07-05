@@ -1,0 +1,23 @@
+test:
+  arango_host:  'localhost'
+  arango_user: root
+  password: root
+  port: 8529
+
+development:
+  arango_host:  'localhost'
+  arango_user: root
+  password: servantes
+  port: 8529
+
+staging:
+  arango_host:  'localhost'
+  arango_user: root
+  password: root
+  port: 8529
+
+production:
+  arango_host:  'localhost'
+  arango_user: root
+  password: root
+  port: 8529

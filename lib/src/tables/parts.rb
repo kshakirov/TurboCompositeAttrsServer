@@ -106,3 +106,15 @@ end
 class PartAudit < ActiveRecord::Base
 
 end
+
+class InterchangeHeader < ActiveRecord::Base
+  self.table_name ='interchange_header'
+  self.primary_key = "id"
+  has_many :interchange_item, class_name: "InterchangeItem",
+           foreign_key: "interchange_header_id"
+end
+
+class InterchangeItem < ActiveRecord::Base
+  self.table_name ='interchange_item'
+  self.primary_key = "part_id"
+end

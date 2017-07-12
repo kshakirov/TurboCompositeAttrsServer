@@ -49,6 +49,7 @@ class TurboGraphQuery
 end
 
 while true do
+
   puts "Enter Part Id"
   id = gets
   id = id.chomp

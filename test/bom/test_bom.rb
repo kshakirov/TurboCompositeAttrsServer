@@ -1,16 +1,20 @@
-require_relative "test_helper"
+require_relative "../test_helper"
 
 class TestBomAttrsReader < MiniTest::Unit::TestCase
 
+  def setup
+    @service_configuration = get_service_configuration
+  end
+
   def test_bom_set
-    setter = BomSetter.new
+    setter = BomSetter.new "redis", @service_configuration
     setter.set_bom_attribute 6243
-    setter.set_bom_attribute 7130
-    setter.set_bom_attribute 6991
-    setter.set_bom_attribute 3756
-    setter.set_bom_attribute 48536
-    setter.set_bom_attribute 840
-    setter.set_bom_attribute 6392
+    # setter.set_bom_attribute 7130
+    # setter.set_bom_attribute 6991
+    # setter.set_bom_attribute 3756
+    # setter.set_bom_attribute 48536
+    # setter.set_bom_attribute 840
+    # setter.set_bom_attribute 6392
     end
 
    def test_bom_get
@@ -30,5 +34,12 @@ class TestBomAttrsReader < MiniTest::Unit::TestCase
      assert_equal 16, attrs.size
      assert_equal '8-A-1560', attrs[6][:part_number]
    end
+
+
+  def test_bom_read
+      reader = BomReader.new @service_configuration
+      boms  =reader.get_attribute 6392
+      assert boms
+  end
 
 end

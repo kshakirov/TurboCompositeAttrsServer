@@ -32,7 +32,7 @@ class BomBuilder
     }
   end
 
-  def build_boms_list_item_ti bom, part
+  def build_ti_dto bom, part
     item = make_list_item
     item[:sku] =part.id
     item[:description] = part.description
@@ -47,7 +47,7 @@ class BomBuilder
   end
 
   def is_type_direct? bom
-    bom['type'] == 'direct'
+    bom['nodeType'] == 'direct'
   end
 
   def find_ti_interchange interchanges
@@ -85,7 +85,7 @@ class BomBuilder
   end
 
 
-  def build_boms_list_item_oem bom, part
+  def build_oem_dto bom, part
     item = make_list_item
     ti_part = get_ti_part(part.id)
     if ti_part.nil?
@@ -111,18 +111,23 @@ class BomBuilder
     item
   end
 
-  def build_boms_list boms
-    boms_list = boms.select { |b| is_type_direct?(b) }
-    boms_list.map do |bl|
+
+  def _build_bom_dto boms_parts
+    boms_parts.map do |bl|
       part = Part.find bl['descendant_sku']
       unless is_external_manufacturer?(part.manfr.name)
         if is_ti_manufacturer(part)
-          build_boms_list_item_ti(bl, part)
+          build_ti_dto(bl, part)
         else
-          build_boms_list_item_oem(bl, part)
+          build_oem_dto(bl, part)
         end
       end
     end
+  end
+
+
+  def build_bom_dto boms
+    _build_bom_dto boms
   end
 
 end

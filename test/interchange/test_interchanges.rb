@@ -1,9 +1,13 @@
-require_relative "test_helper"
+require_relative "../test_helper"
 
 class TestInterchangeAttrsReader < MiniTest::Unit::TestCase
 
+  def setup
+    @service_configuration = get_service_configuration
+  end
+
   def test_interchange_setter
-    setter = InterchangeSetter.new
+    setter = InterchangeSetter.new @service_configuration
     setter.set_interchange_attribute 6392
   end
 
@@ -15,8 +19,10 @@ class TestInterchangeAttrsReader < MiniTest::Unit::TestCase
   end
 
   def test_reader
-    reader = InterchangeReader.new
+    reader = InterchangeReader.new @service_configuration
     interchanges = reader.get_attribute(70793)
-    refute_nil interchanges
+    assert  interchanges
   end
+
+
 end

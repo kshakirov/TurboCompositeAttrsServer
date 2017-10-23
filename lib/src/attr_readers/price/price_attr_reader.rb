@@ -26,7 +26,7 @@ class PriceAttrReader
 
   def get_rest_prices ids
     response = JSON.
-        parse(RestClient.post 'metadata.turbointernational.com:8080/magmi/prices',
+        parse(RestClient.post 'timms.turbointernational.com:8080/magmi/prices',
                               ids.to_json, :content_type => :json, :accept => :json)
     unless response.nil?
       return response

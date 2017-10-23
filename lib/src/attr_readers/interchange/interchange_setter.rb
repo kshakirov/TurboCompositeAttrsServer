@@ -4,21 +4,6 @@ class InterchangeSetter
     @redis_cache = redis_cache
   end
 
-  def _add_standard_attrs_2_interchs (interchanges)
-    if not interchanges.nil?
-      ids = []
-      interchanges.each_with_index do |interchange, index|
-        part = Part.find interchange[:id]
-        ids.push interchange[:id]
-        interchanges[index][:description] = part.description
-        interchanges[index][:part_number] = part.manfr_part_num
-      end
-      interchanges
-    else
-      nil
-    end
-  end
-
   def _dto_interchanges raw_interchanges
     ids = raw_interchanges.compact
     ids.map do |id|
@@ -27,7 +12,8 @@ class InterchangeSetter
           id: id,
           manufacturer: part.manfr.name,
           description: part.description,
-          part_number: part.manfr_part_num
+          part_number: part.manfr_part_num,
+          inactive: part.inactive
       }
     end
   end
@@ -41,8 +27,15 @@ class InterchangeSetter
     @interchange_reader.get_attribute sku
   end
 
+  def filter_out_inactive interchanges
+      interchanges.select do |i|
+        not i[:inactive]
+      end
+  end
+
   def dto_interchanges raw_interchanges
-    _dto_interchanges raw_interchanges
+    interchanges = _dto_interchanges raw_interchanges
+    filter_out_inactive interchanges
   end
 
   def set_interchange_attribute sku

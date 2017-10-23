@@ -1,12 +1,13 @@
 class WhereUsedSetter
-  def initialize redis_cache=RedisCache.new(Redis.new(:host => "redis", :db => 3))
-    @where_used_reader = WhereUsedAttrReader.new
+  def initialize redis_cache=RedisCache.new(Redis.new(:host => "redis", :db => 3)), graph_service_url
+    @where_used_reader = WhereUsedAttrReader.new graph_service_url
     @where_used_builder = WhereUsedBuilder.new
     @redis_cache = redis_cache
     @price_reader = PriceAttrReader.new(@redis_cache)
   end
 
-  def get_prices ids
+  def get_prices iwus
+    ids = wus.map{|w| w[:sku]}
     @price_reader.get_attribute ids
   end
 
@@ -20,20 +21,24 @@ class WhereUsedSetter
     end
   end
 
-  def add_standard_attrs_2_wu wus
-    ids = @where_used_builder.build wus
-    add_prices_to_response wus, get_prices(ids)
+  def dto_where_useds wus
+    @where_used_builder.build wus
   end
 
-  def cache_where_used sku
-    wus = @where_used_reader.get_attribute(sku)
-    unless wus.nil?
-      wus = add_standard_attrs_2_wu(wus)
-      @redis_cache.set_cached_response sku, 'where_used', wus
-    end
+  def cache_where_used sku, wus
+    @redis_cache.set_cached_response sku, 'where_used', wus
+  end
+
+  def query_where_used_service sku
+     @where_used_reader.get_attribute(sku)
   end
 
   def set_where_used_attribute sku
-    cache_where_used sku
+    wus = query_where_used_service sku
+    unless wus.nil?
+      wus = dto_where_useds(wus)
+      add_prices_to_response wus, get_prices(wus)
+      cache_where_used sku, wus
+    end
   end
 end

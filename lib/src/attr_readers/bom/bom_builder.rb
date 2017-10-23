@@ -36,7 +36,7 @@ class BomBuilder
     item = make_list_item
     item[:sku] =part.id
     item[:description] = part.description
-    item[:quantity] =bom['quantity']
+    item[:quantity] =bom['qty']
     item[:part_type] =part.part_type.name
     item[:part_number] = part.manfr_part_num
     item[:name] = part.name || part.part_type.name + '-' + part.manfr_part_num
@@ -92,7 +92,7 @@ class BomBuilder
       item[:oe_sku] = part.id
       item[:oe_part_number] = part.manfr_part_num
       item[:part_type] =part.part_type.name
-      item[:quantity] =bom['quantity']
+      item[:quantity] =bom['qty']
       item[:type] = bom[:type]
       item[:part_type_parent] = bom['part_type_parent']
       item[:interchanges] = find_all_non_ti_interchanges(part.id)
@@ -101,7 +101,7 @@ class BomBuilder
       item[:oe_part_number] = part.manfr_part_num
       item[:sku] =ti_part[:id]
       item[:description] = ""
-      item[:quantity] =bom['quantity']
+      item[:quantity] =bom['qty']
       item[:part_type] =part.part_type.name
       item[:part_type_parent] = bom['part_type_parent']
       item[:part_number] = ti_part[:part_number]
@@ -114,7 +114,7 @@ class BomBuilder
 
   def _build_bom_dto boms_parts
     boms_parts.map do |bl|
-      part = Part.find bl['descendant_sku']
+      part = Part.find bl['partId']
       unless is_external_manufacturer?(part.manfr.name)
         if is_ti_manufacturer(part)
           build_ti_dto(bl, part)

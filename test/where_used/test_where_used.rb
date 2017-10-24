@@ -9,13 +9,13 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
   def test_where_used_setter
     setter = WhereUsedSetter.new @service_configuration
     setter.set_where_used_attribute 49639
-    #setter.set_where_used_attribute 6242
+    setter.set_where_used_attribute 6242
 
   end
 
   def test_where_used_getter
     getter = WhereUsedGetter.new
-    attrs = getter.get_where_used_attribute  49639,  'sVrXIqos994v0pkehHI28Q=='
+    attrs = getter.get_where_used_attribute  49639,  'E'
     assert_equal  'Cartridge', attrs['4742'.to_sym][:partType]
     assert_equal  'CHRA, CT10', attrs['6673'.to_sym][:description]
     refute_nil attrs['6673'.to_sym][:prices]

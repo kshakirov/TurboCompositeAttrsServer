@@ -2,20 +2,27 @@ class InterchangeSetter
   def initialize redis_cache=RedisCache.new(Redis.new(:host => "redis", :db => 3)), graph_service_url
     @interchange_reader = InterchangeReader.new graph_service_url
     @redis_cache = redis_cache
+    @manufacturer = ManufacturerSingleton.instance
+    @part_type = PartTypeSingleton.instance
   end
+
+
+  def _dto_interchange part
+    {
+        id: part.id,
+        manufacturer: @manufacturer.get_manufacturer_name(part.manfr_id),
+        partType:  @part_type.get_part_type_name(part.part_type_id),
+        description: part.description,
+        part_number: part.manfr_part_num,
+        inactive: part.inactive
+    }
+  end
+
 
   def _dto_interchanges raw_interchanges
     ids = raw_interchanges.compact
-    ids.map do |id|
-      part = Part.find id
-      {
-          id: id,
-          manufacturer: part.manfr.name,
-          description: part.description,
-          part_number: part.manfr_part_num,
-          inactive: part.inactive
-      }
-    end
+    parts =  Part.find ids
+    parts.map{|part| _dto_interchange part}
   end
 
 

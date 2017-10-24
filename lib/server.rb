@@ -1,5 +1,7 @@
 require 'set'
 require_relative 'src/tables/views'
+require_relative 'src/tables/manufacturer_singleton'
+require_relative 'src/tables/part_type_singleton'
 require_relative 'src/tables/parts'
 require_relative 'src/attr_readers/utils/utils_module'
 require_relative 'src/attr_readers/price/group_price'

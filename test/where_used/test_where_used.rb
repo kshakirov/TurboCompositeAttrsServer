@@ -7,9 +7,9 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
   end
 
   def test_where_used_setter
-    setter = WhereUsedSetter.new
+    setter = WhereUsedSetter.new @service_configuration
     setter.set_where_used_attribute 49639
-    setter.set_where_used_attribute 6242
+    #setter.set_where_used_attribute 6242
 
   end
 
@@ -27,6 +27,15 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
     reader = WhereUsedAttrReader.new @service_configuration
     res = reader.get_attribute  6242
     assert res.size > 0
+  end
+
+  def test_manufacturer
+    manfr = ManufacturerSingleton.instance
+    name = manfr.get_manufacturer_name 1
+    p name
+    part_type = PartTypeSingleton.instance
+    name = part_type.get_part_type_name 2
+    p name
   end
 
 

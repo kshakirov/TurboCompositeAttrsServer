@@ -30,10 +30,10 @@ class TestBomAttrsReader < MiniTest::Unit::TestCase
      attrs = getter.get_bom_attribute 3756,  'sVrXIqos994v0pkehHI28Q=='
      assert_equal 4, attrs.size
      #assert_equal 3.712, attrs[3][:prices]
-     assert_equal '49179-20300', attrs.first[:oe_part_number]
+     assert_equal '49179-30220', attrs.first[:oe_part_number]
      attrs = getter.get_bom_attribute 48536,  'sVrXIqos994v0pkehHI28Q=='
      assert_equal 17, attrs.size
-     assert_equal '8-A-2515', attrs[6][:part_number]
+     assert_equal '8-A-1560', attrs[6][:part_number]
    end
 
 

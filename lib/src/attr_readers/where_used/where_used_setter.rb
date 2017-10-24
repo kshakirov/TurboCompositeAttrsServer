@@ -6,7 +6,7 @@ class WhereUsedSetter
     @price_reader = PriceAttrReader.new(@redis_cache)
   end
 
-  def get_prices iwus
+  def get_prices wus
     ids = wus.map{|w| w[:sku]}
     @price_reader.get_attribute ids
   end

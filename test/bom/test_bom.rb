@@ -27,6 +27,7 @@ class TestBomAttrsReader < MiniTest::Unit::TestCase
      assert_equal 4, part[:quantity]
      attrs = getter.get_bom_attribute 840,  'E'
      refute_nil attrs
+     assert_equal 4, attrs.size
      attrs = getter.get_bom_attribute 3756,  'E'
      assert_equal 4, attrs.size
      assert_equal 3.712, attrs[3][:prices]

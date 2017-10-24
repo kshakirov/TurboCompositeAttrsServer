@@ -32,7 +32,9 @@ class BomBuilder
         name: nil,
         type: nil,
         part_type_parent: nil,
-        interchanges: []
+        interchanges: [],
+        distance: nil,
+        parentId: nil
     }
   end
 
@@ -44,10 +46,11 @@ class BomBuilder
     item[:quantity] =bom['qty']
     item[:part_type] = @part_type.get_part_type_name(part.part_type_id)
     item[:part_number] = part.manfr_part_num
-    item[:name] = part.name || @part_type.get_part_type_name(part.part_type_id)  + '-' + part.manfr_part_num
+    item[:name] = part.name || @part_type.get_part_type_name(part.part_type_id) + '-' + part.manfr_part_num
     item[:type] = bom[:type]
-    item[:part_type_parent] = bom['part_type_parent']
     item[:interchanges] = find_all_interchanges(part.id)
+    item[:distance] = bom['relationDistance']
+    item[:parentId] = bom['bomPartId']
     item
   end
 
@@ -56,7 +59,7 @@ class BomBuilder
   end
 
   def find_ti_interchange interchanges
-    interchanges.find{|i| is_int_ti_manufacturer(i)}
+    interchanges.find { |i| is_int_ti_manufacturer(i) }
   end
 
   def find_all_interchanges sku
@@ -83,22 +86,21 @@ class BomBuilder
       item[:oe_sku] = part.id
       item[:oe_part_number] = part.manfr_part_num
       item[:part_type] =@part_type.get_part_type_name(part.part_type_id)
-      item[:quantity] =bom['qty']
       item[:type] = bom[:type]
-      item[:part_type_parent] = bom['part_type_parent']
       item[:interchanges] = find_all_non_ti_interchanges(part.id)
     else
       item[:oe_sku] = part.id
       item[:oe_part_number] = part.manfr_part_num
       item[:sku] =ti_part[:id]
       item[:description] = ""
-      item[:quantity] =bom['qty']
       item[:part_type] =@part_type.get_part_type_name(part.part_type_id)
-      item[:part_type_parent] = bom['part_type_parent']
       item[:part_number] = ti_part[:part_number]
-      item[:name] = @part_type.get_part_type_name(part.part_type_id)  + '-' + ti_part[:part_number]
+      item[:name] = @part_type.get_part_type_name(part.part_type_id) + '-' + ti_part[:part_number]
       item[:interchanges] = find_all_non_ti_interchanges(part.id)
     end
+    item[:quantity] =bom['qty']
+    item[:distance] = bom['relationDistance']
+    item[:parentId] = bom['bomPartId']
     item
   end
 

@@ -37,7 +37,8 @@ class WhereUsedSetter
     wus = query_where_used_service sku
     unless wus.nil?
       wus = dto_where_useds(wus)
-      add_prices_to_response wus, get_prices(wus)
+      prices =  get_prices(wus)
+      add_prices_to_response wus, prices
       cache_where_used sku, wus
     end
   end

@@ -45,12 +45,6 @@ class WhereUsedBuilder
     end
   end
 
-  def get_rid_of_repetetive_turbos turbo_part_numbers
-    unless turbo_part_numbers.nil?
-      turbo_part_numbers.to_set
-    end
-  end
-
   def build_where_used_base item
     {
         :sku => item.id,
@@ -61,11 +55,55 @@ class WhereUsedBuilder
     }
   end
 
-  def add_turbo_type wu
-    if is_turbo? wu
-      turbo = Turbo.find wu[:sku]
-      turbo.turbo_model.turbo_type.name
+  def bulk_get_turbo_model ids
+    models = Turbo.eager_load(:turbo_model).find ids
+    ids.map do |id|
+      {
+          sku: id,
+          turbo_type_id: (models.find { |m| m.id == id }).turbo_model.turbo_type_id
+      }
     end
+  end
+
+  def bulk_get_turbo_type models
+    turbo_types_ids = models.map { |m| m[:turbo_type_id] }
+    turbo_types = TurboType.find turbo_types_ids
+    models.map do |m|
+      {
+          sku: m[:sku],
+          turbo_type_name: (turbo_types.find { |tt| tt.id == m[:turbo_type_id] }).name
+      }
+    end
+  end
+
+
+  def add_turbo_type wus
+    turbos = wus.select { |wu| is_turbo? wu }
+    turbos_ids = turbos.map { |t| t[:sku] }
+    models = bulk_get_turbo_model turbos_ids
+    turbo_types_names = bulk_get_turbo_type models
+    wus.map do |wu|
+      t_name = turbo_types_names.find { |tt| tt[:sku] == wu[:sku] }
+      unless t_name.nil?
+        wu[:turboType] = t_name[:turbo_type_name]
+      end
+      wu
+    end
+  end
+
+  def add_turbo_partnumbers wus, turbos
+    wus.map do |wu|
+      if is_cartridge? wu and not turbos.nil?
+        wu[:turboPartNumbers] = turbos.to_a.join(", ")
+      end
+      wu
+    end
+  end
+
+  def get_turbos wus
+    turbos = wus.select { |wu| is_turbo?(wu) }
+    turbos = turbos.map { |t| t[:partNumber] }
+    turbos.to_set
   end
 
   def build_where_used_ti wu
@@ -74,8 +112,8 @@ class WhereUsedBuilder
       wu[:tiSku] = ti_part[:id]
       wu[:tiPartNumber] = ti_part[:part_number]
     end
-    wu[:turboType] = add_turbo_type wu
-    wu[:turboPartNumbers]
+    wu[:turboType] = nil
+    wu[:turboPartNumbers] = nil
     wu
   end
 
@@ -91,7 +129,10 @@ class WhereUsedBuilder
   def _build wus
     ids = get_ids wus
     parts = Part.find ids
-    parts.map { |p| build_where_used p }
+    wus = parts.map { |p| build_where_used p }
+    turbos = get_turbos(wus)
+    wus = add_turbo_partnumbers wus, turbos
+    add_turbo_type wus
   end
 
   def build wus

@@ -31,11 +31,14 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
 
   def test_manufacturer
     manfr = ManufacturerSingleton.instance
-    name = manfr.get_manufacturer_name 1
-    p name
+    assert  manfr.get_manufacturer_name 1
     part_type = PartTypeSingleton.instance
-    name = part_type.get_part_type_name 2
-    p name
+    assert part_type.get_part_type_name 2
+  end
+
+  def test_turbo_model
+    turbo =  Turbo.find 35008
+    assert_equal  'RHB6',  turbo.turbo_model.turbo_type.name
   end
 
 

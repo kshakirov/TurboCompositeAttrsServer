@@ -3,6 +3,7 @@ class WhereUsedBuilder
   def initialize
     @manufacturer = ManufacturerSingleton.instance
     @part_type = PartTypeSingleton.instance
+    @interchanges_getter = InterchangeGetter.new
   end
 
   def is_ti_manufactured? value
@@ -13,8 +14,25 @@ class WhereUsedBuilder
     not value[:tiSku].nil?
   end
 
-  def load_item sku
-    Part.find sku
+  def is_turbo? value
+    value[:partType].downcase == 'turbo'
+  end
+
+  def is_cartridge? value
+    value[:partType].downcase == 'cartridge'
+  end
+
+  def is_int_ti_manufacturer interchange
+    interchange[:manufacturer] == "Turbo International"
+  end
+
+  def find_ti_interchange interchanges
+    interchanges.find { |i| is_int_ti_manufacturer(i) }
+  end
+
+  def get_ti_part sku
+    interchanges = @interchanges_getter.get_cached_interchange(sku) || []
+    find_ti_interchange(interchanges)
   end
 
   def get_id_for_price value
@@ -33,19 +51,37 @@ class WhereUsedBuilder
     end
   end
 
-  def build_where_used item
+  def build_where_used_base item
     {
         :sku => item.id,
         :manufacturer => @manufacturer.get_manufacturer_name(item.manfr_id),
         :partNumber => item.manfr_part_num,
-        #:tiSku => item.ti_sku,
-        #:tiPartNumber => item.ti_part_number,
         :partType => @part_type.get_part_type_name(item.part_type_id),
-        #:turboType => item.turbo_type,
-        #:turboPartNumbers => item.turbo_part_number,
         :description => item.description
     }
+  end
 
+  def add_turbo_type wu
+    if is_turbo? wu
+      turbo = Turbo.find wu[:sku]
+      turbo.turbo_model.turbo_type.name
+    end
+  end
+
+  def build_where_used_ti wu
+    unless is_ti_manufactured? wu
+      ti_part = get_ti_part(wu [:sku]) || Hash.new
+      wu[:tiSku] = ti_part[:id]
+      wu[:tiPartNumber] = ti_part[:part_number]
+    end
+    wu[:turboType] = add_turbo_type wu
+    wu[:turboPartNumbers]
+    wu
+  end
+
+  def build_where_used item
+    wu = build_where_used_base item
+    build_where_used_ti wu
   end
 
   def get_ids wus

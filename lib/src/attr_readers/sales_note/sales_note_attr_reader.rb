@@ -7,10 +7,12 @@ class SalesNoteAttrReader
   def build_sales_note_attribute note
     sales_note = Salesnote.find note.sales_note_id
     if sales_note.state=='published'
-      {:id => sales_note.id,
-       :note => sales_note.state,
-       :comment => sales_note.comment,
-       :create_date => format_date(sales_note.create_date)}
+      {
+          :id => sales_note.id,
+          :note => sales_note.state,
+          :comment => sales_note.comment,
+          :create_date => format_date(sales_note.create_date)
+      }
     end
   end
 

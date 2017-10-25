@@ -6,6 +6,7 @@ class GasketKitReader
   end
 
   private
+  #TODO turbo types may be processed in batches as well but not crucial
   def get_turbo_type turbo
     turbo.turbo_model.turbo_type.name
   end
@@ -50,7 +51,7 @@ class GasketKitReader
 
   def get_parts_from_turbo turbos
     turbos.map { |turbo|
-      part = Part.find turbo.part_id
+      part = turbo.part
       interchanges = get_interchange_attribute(part.id)
       t  = {
           id: part.id,
@@ -67,21 +68,22 @@ class GasketKitReader
   end
 
   def get_interchanges id
-    skus = get_interchange_attribute(id)
-    unless skus.class.name == "Array"
-      skus = []
-    end
+    skus = get_interchange_attribute(id) || []
     skus.push({:id => id})
     skus
+  end
+
+  def bulk_get_turbos skus
+    ids = skus.map{|sku| sku[:id]}
+    Turbo.eager_load(:part, :turbo_model).where(gasket_kit_id: ids).all
   end
 
   public
 
   def get_attribute id
-
     skus = get_interchanges(id)
-    turbos =skus.map{|sku| Turbo.where(gasket_kit_id: sku[:id])}
-    turbos = turbos.map{|turbo| get_parts_from_turbo(turbo)}
+    turbos = bulk_get_turbos skus
+    turbos = get_parts_from_turbo(turbos)
     turbos.flatten
   end
 end

@@ -1,4 +1,4 @@
-require_relative "test_helper"
+require_relative "../test_helper"
 
 class TestServiceKitsAttrsReader < MiniTest::Unit::TestCase
   def test_service_kit_setter

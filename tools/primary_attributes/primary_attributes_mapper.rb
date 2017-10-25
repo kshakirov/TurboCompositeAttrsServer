@@ -2,39 +2,10 @@ require_relative '../mappers_helper'
 require_relative 'worker_classes'
 
 
-def make_future id
-  @worker.future.set_attribute(id)
-end
-
-def map_specific_parts
-  Part.all.map do |part|
-    puts "Created Future for [#{part.id}]"
-    make_future(part.id)
-  end
-end
-
-def remove_resolved_futures futures
-  futures.select do |future|
-    if future.ready?
-      future.value
-      false
-    else
-      true
-    end
-  end
-end
-
-def are_futures_ready? unresolved_futures, initial_size, processing_time
-  puts "Unresolved Futures [#{unresolved_futures.size}]"
-  processed_futures = initial_size - unresolved_futures.size
-  puts "Resolved [#{processed_futures}], Latency [#{processing_time.to_f/processed_futures}] "
-  unresolved_futures.size == 0
-end
-
 graph_service_url = get_service_configuration
 
-@worker = PrimaryAttributeWorker.pool  args: [graph_service_url]
-futures = map_specific_parts
+worker = PrimaryAttributeWorker.pool args: [graph_service_url]
+futures = map_specific_parts(worker)
 ActiveRecord::Base.clear_active_connections!
 counter = 1
 interval = 5

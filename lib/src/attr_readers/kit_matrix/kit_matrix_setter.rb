@@ -7,13 +7,25 @@ class KitMatrixSetter
   end
 
   def _base_header_array
-    [{:field => 'part_number', :title => 'Name' , :show => true},
-     {:field => 'part_type', :title => 'Part' , :show => true},
-     {:field => 'description', :title => 'Desc' , :show => true}]
+    [
+        {
+            :field => 'part_number', :title => 'Name', :show => true
+        },
+        {
+            :field => 'part_type', :title => 'Part', :show => true
+        },
+        {
+            :field => 'description', :title => 'Desc', :show => true
+        }
+    ]
   end
 
-  def _create_header name,sku, headers
-    headers.push({:field => name, :title => name , :show => true, :sku => sku})
+  def _create_header name, sku, headers
+    headers.push(
+        {
+            :field => name, :title => name, :show => true, :sku => sku
+        }
+    )
   end
 
   def create_row id, v, kit_matrix_rows
@@ -22,7 +34,7 @@ class KitMatrixSetter
     else
       kit_matrix_rows[v[:part_number].to_s.to_sym] = {
           :part_number => v[:part_number], :description => v[:description], :part_type => v[:part_type],
-          id.to_s.to_sym => v[:quantity], :sku =>v[:sku]}
+          id.to_s.to_sym => v[:quantity], :sku => v[:sku]}
     end
   end
 
@@ -30,7 +42,7 @@ class KitMatrixSetter
     kit_matrix_rows = {}
     kit_matrix_headers = []
     kits.each do |key, value|
-      id,sku = value[:part_number], value[:sku]
+      id, sku = value[:part_number], value[:sku]
       if value[:manufacturer]=='Turbo International'
         _create_header id, sku, kit_matrix_headers
         value[:bom].each do |v|
@@ -41,51 +53,49 @@ class KitMatrixSetter
     return kit_matrix_rows, _base_header_array.concat(kit_matrix_headers)
   end
 
-  def _get_only_ti_boms sku
-    boms = @bom_getter.get_bom_attribute(sku, nil)
-    ti_boms = []
-    boms.each do |bom|
-      #if  bom[:ti_part_sku] and  bom[:ti_part_sku].size > 0 and bom[:ti_part_sku][0].nil?
-        ti_boms.push bom
-      #end
-    end
-    ti_boms
+  def get_only_ti_boms sku
+    @bom_getter.get_bom_attribute(sku, nil)
   end
 
-  def _get_data sku
-    part = Part.find sku
-    {:manufacturer => part.manfr.name,
-     :part_number => part.manfr_part_num,
-     :sku => sku,
-     :bom => _get_only_ti_boms(sku)
+  def add_part_data part
+    {
+        :manufacturer => part.manfr.name,
+        :part_number => part.manfr_part_num,
+        :sku => part.id,
+        :bom => get_only_ti_boms(part.id)
     }
   end
 
-  def _get_it_rows ti_kits
-
+  def bulk_get_part kit_matrix_array
+    parts = Part.eager_load(:manfr).find kit_matrix_array
+    Hash[parts.map { |p| [p.id.to_s.to_sym, add_part_data(p)] }]
   end
 
-  def _get_ti_kits kits
-    ti_kits = {}
-    kits.each do |kit|
+  def create_kit_matrix_array kit_matrix_headers
+    kit_matrix_headers.map do |kit|
       if kit[:tiSku]
-        ti_kits[kit[:tiSku]] = _get_data kit[:tiSku]
+        kit[:tiSku]
       else
-        ti_kits[kit[:sku]] = _get_data kit[:sku]
-
+        kit[:sku]
       end
     end
-    _create_kit_matrix_table ti_kits
   end
 
 
-  def cache_kit_matrix sku
-      km_headers =  @kit_matrix.get_attribute sku
-      kms = _get_ti_kits km_headers
-      @redis_cache.set_cached_response sku, 'kit_matrix', kms
+  def create_kit_matrix_table kit_matrix_headers
+    kit_matrix_array = create_kit_matrix_array kit_matrix_headers
+    kit_matrix_hash = bulk_get_part kit_matrix_array
+    _create_kit_matrix_table kit_matrix_hash
+  end
+
+
+  def cache_kit_matrix sku, kit_matrixes
+    @redis_cache.set_cached_response sku, 'kit_matrix', kit_matrixes
   end
 
   def set_kit_matrix_attribute sku
-    cache_kit_matrix sku
+    kit_matrix_headers = @kit_matrix.get_attribute sku
+    kit_matrixes = create_kit_matrix_table kit_matrix_headers
+    cache_kit_matrix sku, kit_matrixes
   end
 end

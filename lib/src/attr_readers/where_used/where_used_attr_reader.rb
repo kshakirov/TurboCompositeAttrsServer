@@ -19,16 +19,4 @@ class WhereUsedAttrReader
   def get_attribute id
       query_service id
   end
-
-
-
-  def aggregate_turbo_part_numbers response, item_new
-    if response.has_key? item_new[:sku]
-      response[item_new[:sku]][:turboPartNumbers].push item_new[:turboPartNumbers]
-    else
-      response[item_new[:sku]] = item_new
-      response[item_new[:sku]][:turboPartNumbers] = [item_new[:turboPartNumbers]]
-
-    end
-  end
 end

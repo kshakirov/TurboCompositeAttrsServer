@@ -25,8 +25,10 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
 
   def test_reader
     reader = WhereUsedAttrReader.new @service_configuration
-    res = reader.get_attribute  6242
-    assert res.size > 0
+    wus = reader.get_attribute  6242
+    assert wus.size > 0
+    wus = reader.get_attribute  42768
+    assert_equal 100,  wus.size
   end
 
   def test_manufacturer

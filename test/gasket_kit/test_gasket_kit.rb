@@ -22,7 +22,7 @@ class TestGasketKit < MiniTest::Unit::TestCase
 
   def test_gasket_kit_getter
     turbos =  @gasket_kit_getter.get_gasket_kit_attribute 69079, '4mA2wAME2WZ1J4kWsUyi9w=='
-    refute_nil turbos
+
     assert_equal 5, turbos.size
     assert turbos.find{|t| t[:id] == 10072}
     assert turbos.find{|t| t[:id] == 36359}

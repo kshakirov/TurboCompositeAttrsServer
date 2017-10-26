@@ -9,7 +9,7 @@ class TestServiceKitsAttrsReader < MiniTest::Unit::TestCase
 
   def test_service_kit_gettter
     getter = ServiceKitGetter.new
-    attrs = getter.get_service_kit_attribute  13958,  'sVrXIqos994v0pkehHI28Q=='
+    attrs = getter.get_service_kit_attribute  13958,  'E'
     assert_equal 49, attrs.size
     assert_equal 42.68,   attrs.last[:prices]
   end

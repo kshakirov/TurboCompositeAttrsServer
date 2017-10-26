@@ -26,13 +26,13 @@ def add_standard_attrs_2_sk service_kits
       add_prices_to_sk_response(service_kits, get_prices(ids))
   end
 
-  def cache_service_kit sku
-    service_kits = @service_kits.get_attribute sku
-    add_standard_attrs_2_sk service_kits
+  def cache_service_kit sku, service_kits
     @redis_cache.set_cached_response sku, 'service_kits', service_kits
   end
 
   def set_service_kit_attribute sku
-    cache_service_kit sku
+    service_kits = @service_kits.get_attribute sku || []
+    add_standard_attrs_2_sk service_kits
+    cache_service_kit sku, service_kits
   end
 end

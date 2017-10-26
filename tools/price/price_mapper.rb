@@ -42,7 +42,7 @@ end
 
 def resolve_futures futures
   futures.each{|future|
-    p @price_audit_updater.update_audit_table (future.value)
+     @price_audit_updater.update_audit_table (future.value)
   }
 end
 
@@ -54,7 +54,7 @@ timers = Timers::Group.new
 every_five_seconds = timers.every(10) {
   puts "Another #{10 * counter} seconds"
   if are_futures_ready? get_unresolved_futures(futures)
-    resolve_futures(futures)
+    #resolve_futures(futures)
     timers.cancel
     exit(0)
   end

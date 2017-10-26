@@ -8,8 +8,8 @@ development:
 
 staging:
   rabbit_host:  'localhost'
-  graphdb_service: 'localhost:9009'
+  graphdb_service: '10.192.104.70:9009'
 
 production:
   rabbit_host:  'localhost'
-  graphdb_service: 'localhost:9009'
+  graphdb_service: '10.192.104.70:9009'

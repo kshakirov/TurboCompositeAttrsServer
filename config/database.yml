@@ -9,19 +9,19 @@ development:
 
 staging:
   adapter: jdbcmysql
-  host: localhost
+  host: 10.0.3.1
   database: metadata
-  username: vagrant
-  password: vagrant
+  username: metaserver
+  password: metaserver
   pool: 5
   timeout: 5000
 
 production:
   adapter: jdbcmysql
-  host: metaserverdb1.cslctedjmc6k.us-east-1.rds.amazonaws.com
+  host: 10.0.3.1
   database: metadata
   username: metaserver
-  password: L535X'twf8zk=4x
+  password: metaserver
   pool: 5
   timeout: 5000
 

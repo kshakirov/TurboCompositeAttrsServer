@@ -7,12 +7,6 @@ require 'redis'
 require 'composite_primary_keys'
 require 'logger'
 require_relative "../lib/server.rb"
-ENV['RACK_ENV'] = 'development'
-configuration = YAML::load(IO.read(__dir__ + '/../config/database.yml'))
-@connection = ActiveRecord::Base.establish_connection(configuration[ENV['RACK_ENV']])
-@connection.checkout_timeout = 10
-@logger = Logger.new(__dir__ + '../../logs/cron.log')
-@logger.level =Logger::INFO
 
 def get_service_configuration
   service_configuration = YAML::load(IO.read((__dir__ + '/../config/config.yaml')))
@@ -47,3 +41,6 @@ def are_futures_ready? unresolved_futures, initial_size, processing_time
   puts "Resolved [#{processed_futures}], Latency [#{processing_time.to_f/processed_futures}] "
   unresolved_futures.size == 0
 end
+
+configuration = YAML::load(IO.read(__dir__ + '/../config/database.yml'))
+@connection = ActiveRecord::Base.establish_connection(configuration[ENV['RACK_ENV']])

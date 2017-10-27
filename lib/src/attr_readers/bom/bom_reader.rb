@@ -4,7 +4,7 @@ class BomReader
   end
 
 
-  def query_service id
+  def query_service id, distance=2
     tries ||= 10
     url = "#{@graph_service_url}/parts/#{id}/boms?distance=#{distance}"
     begin

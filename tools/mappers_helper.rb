@@ -49,9 +49,9 @@ def remove_resolved_futures futures
 end
 
 def are_futures_ready? unresolved_futures, initial_size
-  puts "Unresolved Futures [#{unresolved_futures.size}]"
-  processed_futures = initial_size - unresolved_futures.size
-  puts "Resolved Futures [#{processed_futures.size}]"
+  #puts "Unresolved Futures [#{unresolved_futures.size}]"
+  #processed_futures = initial_size - unresolved_futures.size
+  #puts "Resolved Futures [#{processed_futures.size}]"
   unresolved_futures.size == 0
 end
 

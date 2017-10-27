@@ -18,12 +18,12 @@ class WhereUsedAttrReader
       JSON.parse response.body
     rescue Exception => e
       if (tries -= 1) > 0
-        puts "Getting an error #{e.message}"
-        puts "Sleeping 1 sec ... "
+        puts " Sku [#{id}], Attempt [#{tries.to_s}], Sleeping 1 sec ... "
         sleep 1
         retry
       else
-        puts "Giving up .."
+        puts "Giving up, Sku [#{id}] "
+        []
       end
     end
   end

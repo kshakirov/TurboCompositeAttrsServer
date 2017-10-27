@@ -4,6 +4,7 @@ class InterchangeReader
   def initialize graph_service_url
     #@not_external = prepare_manufacturers
     @graph_service_url = graph_service_url
+    @range = Random.new
   end
 
   def is_external_manufacturer? manufacturer_name
@@ -18,8 +19,9 @@ class InterchangeReader
       JSON.parse response.body
     rescue Exception => e
       if (tries -= 1) > 0
-        puts " Sku [#{id}], Attempt [#{tries.to_s}], Sleeping 1 sec ... "
-        sleep 1
+        time_to_sleep = @range.rand(3.5)
+        puts " Sku [#{id}], Attempt [#{tries.to_s}], Sleeping #{time_to_sleep} sec ... "
+        sleep time_to_sleep
         retry
       else
         puts "Giving up, Sku [#{id}] "

@@ -43,9 +43,9 @@ Part.find_in_batches(batch_size: pool_size).each do |group|
 
   initial_size = futures.size
   completion_size += initial_size
-  puts "Before: Initial size #{initial_size}, Futures Size: #{futures.size}"
+  #puts "Before: Initial size #{initial_size}, Futures Size: #{futures.size}"
   until are_futures_ready?(futures, initial_size)
     futures = remove_resolved_futures futures
   end
-  puts "After: Futures Resolved #{completion_size}"
+  #puts "After: Futures Resolved #{completion_size}"
 end

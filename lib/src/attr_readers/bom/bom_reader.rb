@@ -1,6 +1,7 @@
 class BomReader
   def initialize graph_service_url
     @graph_service_url = graph_service_url
+    @range = Random.new
   end
 
 
@@ -12,8 +13,9 @@ class BomReader
       JSON.parse response.body
     rescue Exception => e
       if (tries -= 1) > 0
-        puts " Sku [#{id}], Attempt [#{tries.to_s}], Sleeping 1 sec ... "
-        sleep 1
+        time_to_sleep = @range.rand(3.5)
+        puts " Sku [#{id}], Attempt [#{tries.to_s}], Sleeping #{time_to_sleep} sec ... "
+        sleep time_to_sleep
         retry
       else
         puts "Giving up, Sku [#{id}] "

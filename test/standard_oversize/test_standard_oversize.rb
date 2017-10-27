@@ -3,9 +3,11 @@ require_relative "../test_helper"
 class TestStdOversize < MiniTest::Unit::TestCase
 
   def setup
-    @std_oversize_reader = StandardOversizeAttrReader.new
-    @std_oversize_setter = StandardOversizeSetter.new
-    @std_oversize_getter = StandardOversizeGetter.new
+    redis_host = get_redis_host
+    redis_cache = RedisCache.new(Redis.new(:host => redis_host, :db => 3))
+    @std_oversize_reader = StandardOversizeAttrReader.new redis_cache
+    @std_oversize_setter = StandardOversizeSetter.new redis_cache
+    @std_oversize_getter = StandardOversizeGetter.new redis_cache
   end
 
   def test_jornal_bearing

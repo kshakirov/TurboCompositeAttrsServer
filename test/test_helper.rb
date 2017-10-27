@@ -16,3 +16,8 @@ def get_service_configuration
   service_configuration = YAML::load(IO.read((__dir__ + '/../config/config.yaml')))
   service_configuration[ENV['RACK_ENV']]['graphdb_service']
 end
+
+def get_redis_host
+  redis_configuration = YAML::load(IO.read((__dir__ + '/../config/config.yaml')))
+  redis_configuration[ENV['RACK_ENV']]['redis_host']
+end

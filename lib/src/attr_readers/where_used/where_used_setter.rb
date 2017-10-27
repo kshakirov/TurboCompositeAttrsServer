@@ -1,7 +1,7 @@
 class WhereUsedSetter
-  def initialize redis_cache=RedisCache.new(Redis.new(:host => "redis", :db => 3)), graph_service_url
+  def initialize redis_cache, graph_service_url
     @where_used_reader = WhereUsedAttrReader.new graph_service_url
-    @where_used_builder = WhereUsedBuilder.new
+    @where_used_builder = WhereUsedBuilder.new redis_cache
     @redis_cache = redis_cache
     @price_reader = PriceAttrReader.new(@redis_cache)
   end

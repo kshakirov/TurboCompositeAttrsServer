@@ -1,7 +1,7 @@
 class PriceCacheWorker
   include Celluloid
-  def initialize
-    @redis_cache = RedisCache.new(Redis.new(:host => "redis", :db => 3))
+  def initialize redis_cache
+    @redis_cache = redis_cache
     @price_reader = PriceAttrReader.new @redis_cache
     @price_comparator = PriceAttributeComparator.new
   end

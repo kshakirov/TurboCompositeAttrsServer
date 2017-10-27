@@ -1,8 +1,7 @@
 class WhereUsedGetter
-  def initialize redis_cache=nil
+  def initialize redis_cache
     @price_manager = WhereUsedPriceManager.new
-    @redis_cache = RedisCache.new(Redis.new(:host => "redis", :db => 3))
-    @decriptor = CustomerInfoDecypher.new
+    @redis_cache = redis_cache
   end
 
   def get_cached_where_used sku

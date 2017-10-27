@@ -28,8 +28,8 @@ class PriceAuditUpdater
 
   public
 
-  def initialize
-    @interchange_getter = InterchangeGetter.new
+  def initialize redis_cache
+    @interchange_getter = InterchangeGetter.new redis_cache
   end
 
 

@@ -1,6 +1,6 @@
 class SalesNoteSetter
 
-  def initialize redis_cache=RedisCache.new(Redis.new(:host => "redis", :db => 3))
+  def initialize redis_cache
     @sales_note_reader = SalesNoteAttrReader.new
     @redis_cache = redis_cache
   end

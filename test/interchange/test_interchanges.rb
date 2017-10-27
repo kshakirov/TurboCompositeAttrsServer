@@ -4,10 +4,12 @@ class TestInterchangeAttrsReader < MiniTest::Unit::TestCase
 
   def setup
     @service_configuration = get_service_configuration
+    redis_host = get_redis_host
+    @redis_cache = RedisCache.new(Redis.new(:host => redis_host, :db => 3))
   end
 
   def test_interchange_setter
-    setter = InterchangeSetter.new @service_configuration
+    setter = InterchangeSetter.new @redis_cache, @service_configuration
     setter.set_interchange_attribute 6392
     setter.set_interchange_attribute 6243
     setter.set_interchange_attribute 7130
@@ -19,7 +21,7 @@ class TestInterchangeAttrsReader < MiniTest::Unit::TestCase
   end
 
   def test_interchange_getter
-    getter = InterchangeGetter.new
+    getter = InterchangeGetter.new @redis_cache
     attrs = getter.get_interchange_attribute 6392
     assert_equal 4, attrs.size
     assert_equal 1983, attrs[1][:id]

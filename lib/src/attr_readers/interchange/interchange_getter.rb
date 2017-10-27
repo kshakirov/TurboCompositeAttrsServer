@@ -1,6 +1,6 @@
 class InterchangeGetter
 
-  def initialize redis_cache=RedisCache.new(Redis.new(:host => "redis", :db => 3))
+  def initialize redis_cache
     @redis_cache = redis_cache
   end
 

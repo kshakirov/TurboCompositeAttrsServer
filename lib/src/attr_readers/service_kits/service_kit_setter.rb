@@ -1,8 +1,8 @@
 class ServiceKitSetter
 
-  def initialize redis_cache=RedisCache.new(Redis.new(:host => "redis", :db => 3))
+  def initialize redis_host
     @service_kits = ServiceKitsAttrReader.new
-    @redis_cache =  redis_cache
+    @redis_cache = RedisCache.new(Redis.new(:host => redis_host, :db => 3))
     @price_reader = PriceAttrReader.new(@redis_cache)
     @builder = ServiceKitBuilder.new
   end

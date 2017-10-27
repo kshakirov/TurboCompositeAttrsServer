@@ -2,9 +2,11 @@ require_relative "../test_helper"
 
 class TestGasketKit < MiniTest::Unit::TestCase
   def setup
-    @gasket_kit_reader = GasketKitReader.new
-    @gasket_kit_setter = GasketKitSetter.new
-    @gasket_kit_getter = GasketKitGetter.new
+    redis_host = get_redis_host
+    redis_cache = RedisCache.new(Redis.new(:host => redis_host, :db => 3))
+    @gasket_kit_reader = GasketKitReader.new redis_cache
+    @gasket_kit_setter = GasketKitSetter.new redis_cache
+    @gasket_kit_getter = GasketKitGetter.new redis_cache
   end
 
   def test_gasket_reader

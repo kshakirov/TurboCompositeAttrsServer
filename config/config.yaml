@@ -1,15 +1,15 @@
 test:
-  rabbit_host:  '10.0.3.96'
+  redis_host:  '10.0.3.96'
   graphdb_service: 'localhost:9009'
 
 development:
-  rabbit_host:  '10.0.3.96'
+  redis_host:  '10.0.3.96'
   graphdb_service: 'localhost:9009'
 
 staging:
-  rabbit_host:  'localhost'
+  redis_host:  'localhost'
   graphdb_service: '10.192.104.70:9009'
 
 production:
-  rabbit_host:  'localhost'
+  redis_host:  'localhost'
   graphdb_service: '10.192.104.70:9009'

@@ -1,5 +1,5 @@
 class InterchangeSetter
-  def initialize redis_cache=RedisCache.new(Redis.new(:host => "redis", :db => 3)), graph_service_url
+  def initialize redis_cache, graph_service_url
     @interchange_reader = InterchangeReader.new graph_service_url
     @redis_cache = redis_cache
     @manufacturer = ManufacturerSingleton.instance

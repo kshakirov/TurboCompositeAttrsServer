@@ -4,10 +4,12 @@ class TestBomAttrsReader < MiniTest::Unit::TestCase
 
   def setup
     @service_configuration = get_service_configuration
+    redis_host = get_redis_host
+    @redis_cache = RedisCache.new(Redis.new(:host => redis_host, :db => 3))
   end
 
   def test_bom_set
-    setter = BomSetter.new "redis", @service_configuration
+    setter = BomSetter.new @redis_cache, @service_configuration
     setter.set_bom_attribute 6392
     setter.set_bom_attribute 6243
     setter.set_bom_attribute 7130
@@ -18,7 +20,7 @@ class TestBomAttrsReader < MiniTest::Unit::TestCase
     end
 
    def test_bom_get
-     getter = BomGetter.new
+     getter = BomGetter.new @redis_cache
      attrs = getter.get_bom_attribute 6392,  'E'
      refute_nil attrs
      assert_equal 16,  attrs.size

@@ -1,9 +1,9 @@
 class WhereUsedBuilder
 
-  def initialize
+  def initialize redis_cache
     @manufacturer = ManufacturerSingleton.instance
     @part_type = PartTypeSingleton.instance
-    @interchanges_getter = InterchangeGetter.new
+    @interchanges_getter = InterchangeGetter.new redis_cache
   end
 
   def is_ti_manufactured? value

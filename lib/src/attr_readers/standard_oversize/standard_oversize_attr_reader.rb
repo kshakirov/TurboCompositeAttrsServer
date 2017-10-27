@@ -10,8 +10,8 @@ class StandardOversizeAttrReader
 
   def_delegator :@interchange_getter, :get_interchange_attribute, :get_interchange_attribute
 
-  def initialize
-    @interchange_getter = InterchangeGetter.new
+  def initialize redis_cache
+    @interchange_getter = InterchangeGetter.new redis_cache
     @not_external = prepare_manufacturers
   end
 

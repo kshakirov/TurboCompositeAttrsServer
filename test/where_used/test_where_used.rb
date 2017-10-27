@@ -4,17 +4,19 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
 
   def setup
     @service_configuration = get_service_configuration
+    redis_host = get_redis_host
+    @redis_cache = RedisCache.new(Redis.new(:host => redis_host, :db => 3))
   end
 
   def test_where_used_setter
-    setter = WhereUsedSetter.new @service_configuration
+    setter = WhereUsedSetter.new @redis_cache, @service_configuration
     setter.set_where_used_attribute 49639
     setter.set_where_used_attribute 6242
 
   end
 
   def test_where_used_getter
-    getter = WhereUsedGetter.new
+    getter = WhereUsedGetter.new @redis_cache
     attrs = getter.get_where_used_attribute  49639,  'E'
     assert_equal  'Cartridge', attrs['4742'.to_sym][:partType]
     assert_equal  'CHRA, CT10', attrs['6673'.to_sym][:description]
@@ -28,7 +30,7 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
     wus = reader.get_attribute  6242
     assert wus.size > 0
     wus = reader.get_attribute  42768
-    assert_equal 100,  wus.size
+    assert_equal 319,  wus.size
   end
 
   def test_manufacturer

@@ -1,8 +1,8 @@
 class KitMatrixSetter
 
-  def initialize redis_cache=RedisCache.new(Redis.new(:host => "redis", :db => 3))
+  def initialize redis_host
     @kit_matrix = ServiceKitsAttrReader.new
-    @redis_cache = redis_cache
+    @redis_cache = RedisCache.new(Redis.new(:host => redis_host, :db => 3))
     @bom_getter = BomGetter.new @redis_cache
   end
 

@@ -1,6 +1,7 @@
 class GasketTurboSetter
-  def initialize redis_cache=RedisCache.new(Redis.new(:host => "redis", :db => 3))
-    @gasket_turbo_reader = GasketTurboReader.new
+
+  def initialize redis_cache
+    @gasket_turbo_reader = GasketTurboReader.new redis_cache
     @redis_cache = redis_cache
     @price_reader = PriceAttrReader.new(@redis_cache)
   end
@@ -13,7 +14,6 @@ class GasketTurboSetter
     end
     gasket_turbo
   end
-
 
   def cache_gasket_turbo sku
     gasket_turbo = @gasket_turbo_reader.get_attribute(sku)

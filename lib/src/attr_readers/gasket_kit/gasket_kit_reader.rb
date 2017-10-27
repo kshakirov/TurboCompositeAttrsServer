@@ -1,8 +1,7 @@
 class GasketKitReader
-  extend Forwardable
-  def_delegator :@interchange_getter, :get_interchange_attribute, :get_interchange_attribute
-  def initialize
-      @interchange_getter = InterchangeGetter.new
+
+  def initialize redis_cache
+      @interchange_getter = InterchangeGetter.new redis_cache
   end
 
   private
@@ -52,7 +51,7 @@ class GasketKitReader
   def get_parts_from_turbo turbos
     turbos.map { |turbo|
       part = turbo.part
-      interchanges = get_interchange_attribute(part.id)
+      interchanges = @interchange_getter.get_interchange_attribute(part.id)
       t  = {
           id: part.id,
           ti_id: get_ti_part_id(part, interchanges),
@@ -68,7 +67,7 @@ class GasketKitReader
   end
 
   def get_interchanges id
-    skus = get_interchange_attribute(id) || []
+    skus = @interchange_getter.get_interchange_attribute(id) || []
     skus.push({:id => id})
     skus
   end

@@ -1,9 +1,10 @@
 class GasketKitSetter
-  def initialize redis_cache=RedisCache.new(Redis.new(:host => "redis", :db => 3))
-    @gasket_turbo_reader = GasketKitReader.new
+  def initialize redis_cache
+    @gasket_turbo_reader = GasketKitReader.new redis_cache
     @redis_cache = redis_cache
     @price_reader = PriceAttrReader.new(@redis_cache)
   end
+
   private
   def add_prices gasket_kit_turbos
     gasket_kit_turbos.map { |t|
@@ -12,12 +13,10 @@ class GasketKitSetter
     }
   end
 
-
-
   def cache_gasket_kit sku
     gasket_kit_turbos = @gasket_turbo_reader.get_attribute(sku)
     add_prices(gasket_kit_turbos)
-    @redis_cache.set_cached_response(sku,  'gasket_kit',gasket_kit_turbos)
+    @redis_cache.set_cached_response(sku, 'gasket_kit', gasket_kit_turbos)
   end
 
   public

@@ -6,8 +6,8 @@ class BomBuilder
     @not_external.index manufacturer_name
   end
 
-  def initialize
-    @interchanges_getter = InterchangeGetter.new
+  def initialize redis_cache
+    @interchanges_getter = InterchangeGetter.new redis_cache
     @not_external = prepare_manufacturers
     @manufacturer = ManufacturerSingleton.instance
     @part_type = PartTypeSingleton.instance

@@ -14,7 +14,7 @@ class InterchangeReader
     tries ||= 10
     begin
       url = "#{@graph_service_url}/parts/#{id}/interchanges"
-      response = RestClient.get url
+      response =  RestClient::Request.execute(:method => :get, :url => url, :timeout => 60, :open_timeout => 60)
       JSON.parse response.body
     rescue Exception => e
       if (tries -= 1) > 0
@@ -23,13 +23,12 @@ class InterchangeReader
         retry
       else
         puts "Giving up, Sku [#{id}] "
-        []
       end
     end
   end
 
   def get_attribute id
     response = query_service id
-    response['parts']
+    response['parts'] unless response.nil?
   end
 end

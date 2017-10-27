@@ -45,7 +45,7 @@ class BomSetter
   end
 
   def set_bom_attribute sku
-    boms = query_bom_service(sku) || []
+    boms = query_bom_service(sku) || Array.new
     boms_dto = build_bom_dto(boms)
     boms_ids = get_boms_ids(boms_dto)
     boms_prices = get_prices(boms_ids)

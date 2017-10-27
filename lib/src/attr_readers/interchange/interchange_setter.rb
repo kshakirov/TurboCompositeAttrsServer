@@ -11,7 +11,7 @@ class InterchangeSetter
     {
         id: part.id,
         manufacturer: @manufacturer.get_manufacturer_name(part.manfr_id),
-        partType:  @part_type.get_part_type_name(part.part_type_id),
+        partType: @part_type.get_part_type_name(part.part_type_id),
         description: part.description,
         part_number: part.manfr_part_num,
         inactive: part.inactive
@@ -21,8 +21,8 @@ class InterchangeSetter
 
   def _dto_interchanges raw_interchanges
     ids = raw_interchanges.compact
-    parts =  Part.find ids
-    parts.map{|part| _dto_interchange part}
+    parts = Part.find ids
+    parts.map { |part| _dto_interchange part }
   end
 
 
@@ -35,9 +35,9 @@ class InterchangeSetter
   end
 
   def filter_out_inactive interchanges
-      interchanges.select do |i|
-        not i[:inactive]
-      end
+    interchanges.select do |i|
+      not i[:inactive]
+    end
   end
 
   def dto_interchanges raw_interchanges
@@ -46,8 +46,8 @@ class InterchangeSetter
   end
 
   def set_interchange_attribute sku
-    raw_interchanges = get_raw_interchanges sku
-    interchanges_dto = dto_interchanges raw_interchanges
-    cache_interchange sku, interchanges_dto
+      raw_interchanges = get_raw_interchanges(sku )|| Array.new
+      interchanges_dto = dto_interchanges raw_interchanges
+      cache_interchange sku, interchanges_dto
   end
 end

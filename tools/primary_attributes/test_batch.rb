@@ -19,11 +19,36 @@ class PrimaryAttributeReader
   end
 end
 
+class PrimaryAttributeWorker
+  include Celluloid
+
+  def initialize redis_cache, graph_service_url
+    @interchange_worker = InterchangeSetter.new redis_cache,graph_service_url
+    @bom_worker = BomSetter.new redis_cache,graph_service_url
+    @where_worker = WhereUsedSetter.new redis_cache,graph_service_url
+    #@service_kit_worker = ServiceKitSetter.new
+    @sales_notes_worker = SalesNoteSetter.new redis_cache
+  end
+
+  def set_attribute sku
+    @interchange_worker.set_interchange_attribute sku
+    @bom_worker.set_bom_attribute sku
+    @where_worker.set_where_used_attribute sku
+    #@service_kit_worker.set_service_kit_attribute sku
+    @sales_notes_worker.set_sales_note_attribute sku
+    ActiveRecord::Base.clear_active_connections!
+    "Future Finished sku [#{sku}]"
+  end
+end
+
 
 pool_size = 4
 completion_size = 0
+redis_host = get_redis_host
+redis_cache = RedisCache.new(Redis.new(:host => redis_host, :db => 3))
 graph_service_url = get_service_configuration
-worker = PrimaryAttributeReader.pool size: pool_size, args: [graph_service_url]
+#worker = PrimaryAttributeReader.pool size: pool_size, args: [graph_service_url]
+worker = PrimaryAttributeWorker.pool size: pool_size, args: [redis_cache, graph_service_url]
 
 
 def make_batch_future id, worker

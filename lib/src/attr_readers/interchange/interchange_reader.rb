@@ -15,7 +15,8 @@ class InterchangeReader
     tries ||= 10
     begin
       url = "#{@graph_service_url}/parts/#{id}/interchanges"
-      response =  RestClient::Request.execute(:method => :get, :url => url, :timeout => 60, :open_timeout => 60)
+      response =  RestClient::Request.execute(:method => :get, :url => url, :timeout => 60, :open_timeout => 60,
+                                              :headers => {'Connection' => 'close'})
       JSON.parse response.body
     rescue Exception => e
       if (tries -= 1) > 0

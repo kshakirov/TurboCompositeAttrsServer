@@ -128,7 +128,7 @@ class WhereUsedBuilder
 
   def _build wus
     ids = get_ids wus
-    parts = Part.find ids
+    parts = Part.where id:  ids || []
     wus = parts.map { |p| build_where_used p }
     turbos = get_turbos(wus)
     wus = add_turbo_partnumbers wus, turbos

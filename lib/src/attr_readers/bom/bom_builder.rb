@@ -107,7 +107,7 @@ class BomBuilder
 
   def get_bom_part boms
     ids = boms.map { |bp| bp['partId'] }
-    Part.find ids
+    Part.where id:  ids
   end
 
   def pair_bom_and_parts boms, parts
@@ -132,7 +132,7 @@ class BomBuilder
   end
 
   def _build_bom_dto boms
-    parts = get_bom_part boms
+    parts = get_bom_part boms || []
     boms_parts = pair_bom_and_parts boms, parts
     boms_parts = filter_out_ext_manufacturer boms_parts
     _build boms_parts

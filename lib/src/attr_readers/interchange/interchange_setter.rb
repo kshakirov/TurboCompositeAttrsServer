@@ -21,7 +21,7 @@ class InterchangeSetter
 
   def _dto_interchanges raw_interchanges
     ids = raw_interchanges.compact
-    parts = Part.find ids
+    parts = Part.where(id:  ids)
     parts.map { |part| _dto_interchange part }
   end
 

@@ -13,14 +13,14 @@ class GasketKitSetter
     }
   end
 
-  def cache_gasket_kit sku
-    gasket_kit_turbos = @gasket_turbo_reader.get_attribute(sku)
-    add_prices(gasket_kit_turbos)
+  def cache_gasket_kit sku, gasket_kit_turbos
     @redis_cache.set_cached_response(sku, 'gasket_kit', gasket_kit_turbos)
   end
 
   public
   def set_gasket_kit_attribute sku
-    cache_gasket_kit sku
+    gasket_kit_turbos = @gasket_turbo_reader.get_attribute(sku)
+    gasket_kit_turbos = add_prices(gasket_kit_turbos)
+    cache_gasket_kit sku, gasket_kit_turbos
   end
 end

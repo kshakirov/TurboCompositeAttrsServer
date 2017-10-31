@@ -14,7 +14,7 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
   end
 
   def test_rest_price
-    price = @price_reader.get_rest_prices([42018])
+    price = @price_reader.get_rest_prices([42018, 4742])
     refute_nil price
   end
 end

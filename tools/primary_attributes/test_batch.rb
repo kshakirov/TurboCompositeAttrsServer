@@ -2,6 +2,8 @@ require_relative '../mappers_helper'
 require_relative 'first_stage_worker'
 require_relative 'second_stage_worker'
 require_relative 'zero_stage_worker'
+require_relative 'third_stage_worker'
+require_relative 'fourth_stage_worker'
 
 pool_size = ARGV[0].to_i || 4
 completion_size = 0
@@ -11,13 +13,13 @@ graph_service_url = get_service_configuration
 zero_worker = ZeroStageWorker.pool size: pool_size, args: [redis_cache]
 first_worker = FirstStageWorker.pool size: pool_size, args: [redis_cache, graph_service_url]
 second_worker = SecondStageWorker.pool size: pool_size, args: [redis_cache, graph_service_url]
+fourth_worker = FourthStageWorker.pool size: pool_size, args: [redis_cache]
 
 
 def make_batch_future id, worker
   worker.future.set_attribute(id)
 end
 
-#PRICES
 puts "Starting Price Stage"
 
 Part.joins(:manfr).where(manfr: {name: 'Turbo International'}).
@@ -34,7 +36,7 @@ Part.joins(:manfr).where(manfr: {name: 'Turbo International'}).
     futures = remove_resolved_futures futures
   end
 end
-#INTERCHANGES
+
 puts "Starting First Stage "
 Part.find_in_batches(batch_size: pool_size).each do |group|
   futures = []
@@ -49,7 +51,7 @@ Part.find_in_batches(batch_size: pool_size).each do |group|
     futures = remove_resolved_futures futures
   end
 end
-#BOMS
+
 puts "Starting Second Stage "
 Part.find_in_batches(batch_size: pool_size).each do |group|
   futures = []
@@ -63,4 +65,27 @@ Part.find_in_batches(batch_size: pool_size).each do |group|
   until are_futures_ready?(futures, initial_size)
     futures = remove_resolved_futures futures
   end
+end
+
+
+puts "Starting Standard Oversize Stage "
+Part.joins(:part_type).where(part_type: {
+    name: [
+        'Journal Bearing', 'Journal Bearing Spacer', 'Piston Ring'
+    ]
+}).find_in_batches(batch_size: pool_size).each do |group|
+  futures = []
+  ids = group.map do |part|
+    futures.push make_batch_future(part.id, fourth_worker)
+    part.id
+  end
+
+  puts "Standard Oversize Stage Ids => " + ids.join(",")
+  initial_size = futures.size
+  completion_size += initial_size
+  until are_futures_ready?(futures, initial_size)
+    futures = remove_resolved_futures futures
+  end
+
+
 end

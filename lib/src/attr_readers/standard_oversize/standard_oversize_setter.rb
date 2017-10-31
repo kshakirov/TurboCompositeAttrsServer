@@ -34,12 +34,7 @@ class StandardOversizeSetter
     end
   end
 
-  def cache_standard_oversize sku
-    standard_oversize = @standard_oversize_reader.get_attribute(sku)
-    if is_valid_oversize?(standard_oversize)
-      process_oversizeds(standard_oversize)
-      process_standard_interchanges(standard_oversize)
-    end
+  def cache_standard_oversize sku, standard_oversize
     unless standard_oversize.nil?
       @redis_cache.set_cached_response(sku, 'standard_oversize', standard_oversize)
     end
@@ -47,7 +42,12 @@ class StandardOversizeSetter
 
   public
   def set_std_oversize_attribute sku
-    cache_standard_oversize sku
+    standard_oversize = @standard_oversize_reader.get_attribute(sku)
+    if is_valid_oversize?(standard_oversize)
+      process_oversizeds(standard_oversize)
+      process_standard_interchanges(standard_oversize)
+    end
+    cache_standard_oversize sku, standard_oversize
     "Sku [#{sku}]  Finished"
   end
 end

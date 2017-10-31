@@ -57,3 +57,5 @@ end
 
 configuration = YAML::load(IO.read(__dir__ + '/../config/database.yml'))
 @connection = ActiveRecord::Base.establish_connection(configuration[ENV['RACK_ENV']])
+@connection.checkout_timeout = 60
+

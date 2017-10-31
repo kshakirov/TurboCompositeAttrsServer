@@ -13,7 +13,7 @@ staging:
   database: metadata
   username: metaserver
   password: metaserver
-  pool: 5
+  pool: 20
   timeout: 5000
 
 production:

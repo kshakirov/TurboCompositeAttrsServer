@@ -1,4 +1,4 @@
-class PrimaryAttributeWorker
+class SecondStageWorker
   include Celluloid
 
   def initialize redis_cache, graph_service_url

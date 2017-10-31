@@ -1,5 +1,5 @@
 require_relative '../mappers_helper'
-require_relative 'worker_classes'
+require_relative 'second_stage_worker'
 
 
 redis_host = get_redis_host

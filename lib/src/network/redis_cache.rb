@@ -18,7 +18,7 @@ class RedisCache
         false
       end
     rescue Exception => e
-      puts "Problems with getting response for product [#{p.id}]"
+      puts "Problems with getting response for product [#{sku}]"
       false
     end
   end

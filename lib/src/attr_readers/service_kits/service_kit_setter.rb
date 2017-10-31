@@ -1,29 +1,41 @@
 class ServiceKitSetter
 
-  def initialize redis_host
+  def initialize redis_cache
     @service_kits = ServiceKitsAttrReader.new
-    @redis_cache = RedisCache.new(Redis.new(:host => redis_host, :db => 3))
+    @redis_cache = redis_cache
     @price_reader = PriceAttrReader.new(@redis_cache)
-    @builder = ServiceKitBuilder.new
+    @builder = ServiceKitBuilder.new @redis_cache
   end
 
   def get_prices ids
     @price_reader.get_attribute ids
   end
 
-  def add_prices_to_sk_response sks, prices
-    sks.each_with_index do |sk, index|
-      prices.each do |price|
-        if price and price[:partId] == sk[:tiSku]
-          sks[index][:prices] = price[:prices]
-        end
+  def get_skus service_kits_list
+    service_kits_list.map do |sk|
+      if sk[:tiSku]
+        sk[:tiSku]
+      else
+        sk[:sku]
       end
     end
   end
 
+  def add_prices_to_sk_response service_kits_list, prices
+    service_kits_list.map do |sk|
+      prices.each do |price|
+        if price and price[:partId] == sk[:tiSku]
+          sk[:prices] = price[:prices]
+        end
+      end
+      sk
+    end
+  end
+
 def add_standard_attrs_2_sk service_kits
-      ids = @builder.build service_kits
-      add_prices_to_sk_response(service_kits, get_prices(ids))
+      service_kits_list =  @builder.build service_kits
+      ids = get_skus(service_kits_list)
+      add_prices_to_sk_response(service_kits_list, get_prices(ids))
   end
 
   def cache_service_kit sku, service_kits
@@ -32,7 +44,7 @@ def add_standard_attrs_2_sk service_kits
 
   def set_service_kit_attribute sku
     service_kits = @service_kits.get_attribute sku || []
-    add_standard_attrs_2_sk service_kits
+    service_kits = add_standard_attrs_2_sk  service_kits
     cache_service_kit sku, service_kits
   end
 end

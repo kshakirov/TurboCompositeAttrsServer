@@ -16,6 +16,10 @@ class VmagmiServiceKit < ActiveRecord::Base
   self.table_name = 'vmagmi_service_kits'
 end
 
+class VpartTurboTypeKits< ActiveRecord::Base
+self.table_name = 'vpart_turbotype_kits'
+end
+
 class Vint < ActiveRecord::Base
   self.table_name = 'vint'
 end

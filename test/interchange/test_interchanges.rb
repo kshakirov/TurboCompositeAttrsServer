@@ -10,14 +10,11 @@ class TestInterchangeAttrsReader < MiniTest::Unit::TestCase
 
   def test_interchange_setter
     setter = InterchangeSetter.new @redis_cache, @service_configuration
-    setter.set_interchange_attribute 6392
-    setter.set_interchange_attribute 6243
-    setter.set_interchange_attribute 7130
-    setter.set_interchange_attribute 6991
-    setter.set_interchange_attribute 3756
-    setter.set_interchange_attribute 48536
-    setter.set_interchange_attribute 840
-    setter.set_interchange_attribute 6392
+    setter.set_interchange_attribute  1
+    setter.set_interchange_attribute 2
+    setter.set_interchange_attribute 3
+    setter.set_interchange_attribute 4
+
   end
 
   def test_interchange_getter

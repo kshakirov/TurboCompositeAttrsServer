@@ -1,32 +1,43 @@
 class ServiceKitBuilder
   include TurboUtils
 
-  def initialize
+  def initialize redis_cache
     @not_external = prepare_manufacturers
+    @interchange_getter =  InterchangeGetter.new redis_cache
   end
 
   def is_external_manufacturer? manufacturer_name
     @not_external.index manufacturer_name
   end
 
-  def _get_ti_part_number sku
-    unless sku.nil?
-      part = Part.find sku
-      part.manfr_part_num
-    end
-  end
-
-  def _has_ti_part? value
-    not value[:tiSku].nil?
-  end
 
   def _is_ti_part? part
     part.manfr.name== "Turbo International"
   end
 
+  def get_ti_interchange sk
+    interchanges  = @interchange_getter.get_cached_interchange(sk[:sku])
+    if interchanges
+      ti_part  = interchanges.find{|i| i[:manufacturer] == "Turbo International"}
+       if ti_part and not  ti_part.empty?
+        sk[:ti_part_number] = ti_part[:part_number]
+         sk[:tiSku] = ti_part[:id]
+       end
+    end
+  end
+
+  def bulk_get_interchanges service_kits_list
+      service_kits_list.map do |sk|
+        if sk[:ti_part_number].nil?
+              get_ti_interchange(sk)
+        end
+        sk
+      end
+  end
+
 
   def bulk_get_part service_kits
-    ids = service_kits.map{|sk| sk[:sku]}
+    ids = service_kits.map{|sk| sk[:kit_id]}
     Part.eager_load(:manfr).find ids
   end
 
@@ -36,26 +47,22 @@ class ServiceKitBuilder
        Part.find ti_ids
   end
 
-  def  add_ti_partnumber ti_parts, service_kits
-    service_kits.map do |sk|
-        unless sk[:part_number]
-            ti_part = ti_parts.find{|tip| tip.id == sk[:tiSku]}
-            sk[:ti_part_number] = ti_part.manfr_part_num
-        end
-    end
-  end
-
   def combine_part_and_sk parts, service_kits
-      service_kits.map do |sk|
-          part = parts.find{|p| p.id==sk[:sku]}
+      service_kits.map do |s|
+          part = parts.find{|p| p.id==s.kit_id}
+          sk  = {
+
+          }
           if _is_ti_part? part
             sk[:part_number] = nil
             sk[:ti_part_number] = part.manfr_part_num
-            sk[:tiSku] = sk[:sku]
+            sk[:tiSku] = part.id
           else
             sk[:part_number] = part.manfr_part_num
-            sk[:ti_part_number] =  sk[:tiPartNumber]
+            sk[:ti_part_number] =  nil
+            sk[:sku] =  part.id
           end
+          sk[:description] = part.description
           sk
       end
   end
@@ -69,19 +76,10 @@ class ServiceKitBuilder
       combine_part_and_sk(parts, service_kits)
   end
 
-  def _get_skus service_kits_list
-    service_kits_list.map do |sk|
-      if sk[:tiSku]
-        sk[:tiSku]
-      else
-        sk[:sku]
-      end
-    end
-  end
+
 
   def build service_kits
     service_kits_list = _build_list(service_kits)
-    service_kits_list.compact!
-    _get_skus(service_kits_list)
+    bulk_get_interchanges(service_kits_list)
   end
 end

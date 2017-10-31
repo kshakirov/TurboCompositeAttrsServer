@@ -15,20 +15,20 @@ def make_batch_future id, worker
   worker.future.set_attribute(id)
 end
 
-# puts "Starting First Stage "
-# Part.find_in_batches(batch_size: pool_size).each do |group|
-#   futures = []
-#   ids = group.map do |part|
-#     futures.push make_batch_future(part.id, first_worker)
-#     part.id
-#   end
-#   puts "First Stage  Ids   => " + ids.join(",")
-#   initial_size = futures.size
-#   completion_size += initial_size
-#   until are_futures_ready?(futures, initial_size)
-#     futures = remove_resolved_futures futures
-#   end
-# end
+puts "Starting First Stage "
+Part.find_in_batches(batch_size: pool_size).each do |group|
+  futures = []
+  ids = group.map do |part|
+    futures.push make_batch_future(part.id, first_worker)
+    part.id
+  end
+  puts "First Stage  Ids   => " + ids.join(",")
+  initial_size = futures.size
+  completion_size += initial_size
+  until are_futures_ready?(futures, initial_size)
+    futures = remove_resolved_futures futures
+  end
+end
 
 puts "Starting Second Stage "
 Part.find_in_batches(batch_size: pool_size).each do |group|

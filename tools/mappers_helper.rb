@@ -9,7 +9,6 @@ require 'logger'
 require 'time_difference'
 require_relative "../lib/server.rb"
 
-
 unless  ENV['RACK_ENV']
   puts "SET RACK_ENV = [production,development,staging,test]  then try again .."
   exit(1)
@@ -26,16 +25,11 @@ def get_redis_host
   redis_configuration[ENV['RACK_ENV']]['redis_host']
 end
 
-def make_future id, worker
-  worker.future.set_attribute(id)
-end
+configuration = YAML::load(IO.read(__dir__ + '/../config/database.yml'))
+@connection = ActiveRecord::Base.establish_connection(configuration[ENV['RACK_ENV']])
+@connection.checkout_timeout = 60
 
-def map_specific_parts worker
-  Part.all.map do |part|
-    puts "Created Future for [#{part.id}]"
-    make_future(part.id, worker)
-  end
-end
+###########       AUXILIARY
 
 def remove_resolved_futures futures
   futures.select do |future|
@@ -49,13 +43,9 @@ def remove_resolved_futures futures
 end
 
 def are_futures_ready? unresolved_futures, initial_size
-  #puts "Unresolved Futures [#{unresolved_futures.size}]"
-  #processed_futures = initial_size - unresolved_futures.size
-  #puts "Resolved Futures [#{processed_futures.size}]"
   unresolved_futures.size == 0
 end
 
-configuration = YAML::load(IO.read(__dir__ + '/../config/database.yml'))
-@connection = ActiveRecord::Base.establish_connection(configuration[ENV['RACK_ENV']])
-@connection.checkout_timeout = 60
-
+def make_batch_future id, worker
+  worker.future.set_attribute(id)
+end

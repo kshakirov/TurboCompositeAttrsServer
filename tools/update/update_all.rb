@@ -5,6 +5,9 @@ require_relative 'zero_stage_worker'
 require_relative 'third_stage_worker'
 require_relative 'fourth_stage_worker'
 
+
+
+
 pool_size = ARGV[0].to_i || 4
 completion_size = 0
 redis_host = get_redis_host
@@ -16,9 +19,6 @@ second_worker = SecondStageWorker.pool size: pool_size, args: [redis_cache, grap
 fourth_worker = FourthStageWorker.pool size: pool_size, args: [redis_cache]
 
 
-def make_batch_future id, worker
-  worker.future.set_attribute(id)
-end
 
 puts "Starting Price Stage"
 
@@ -86,6 +86,4 @@ Part.joins(:part_type).where(part_type: {
   until are_futures_ready?(futures, initial_size)
     futures = remove_resolved_futures futures
   end
-
-
 end

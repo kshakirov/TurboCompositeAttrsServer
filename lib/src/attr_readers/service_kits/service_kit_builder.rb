@@ -12,7 +12,7 @@ class ServiceKitBuilder
 
 
   def _is_ti_part? part
-    part.manfr.name== "Turbo International"
+    part[:manfr]== "Turbo International"
   end
 
   def get_ti_interchange sk
@@ -47,22 +47,21 @@ class ServiceKitBuilder
        Part.find ti_ids
   end
 
-  def combine_part_and_sk parts, service_kits
+  def transform_list service_kits
       service_kits.map do |s|
-          part = parts.find{|p| p.id==s.kit_id}
           sk  = {
 
           }
-          if _is_ti_part? part
+          if _is_ti_part? s
             sk[:part_number] = nil
-            sk[:ti_part_number] = part.manfr_part_num
-            sk[:tiSku] = part.id
+            sk[:ti_part_number] = s[:part_number]
+            sk[:tiSku] = s[:id]
           else
-            sk[:part_number] = part.manfr_part_num
+            sk[:part_number] = s[:part_number]
             sk[:ti_part_number] =  nil
-            sk[:sku] =  part.id
+            sk[:sku] =  s[:id]
           end
-          sk[:description] = part.description
+          sk[:description] = s[:description]
           sk
       end
   end
@@ -71,15 +70,8 @@ class ServiceKitBuilder
       service_kits.select{|sk| not is_external_manufacturer?(sk)}
   end
 
-  def _build_list service_kits
-      parts = bulk_get_part(service_kits)
-      combine_part_and_sk(parts, service_kits)
-  end
-
-
-
   def build service_kits
-    service_kits_list = _build_list(service_kits)
+    service_kits_list = transform_list(service_kits)
     bulk_get_interchanges(service_kits_list)
   end
 end

@@ -106,3 +106,8 @@ end
 class PartAudit < ActiveRecord::Base
 
 end
+
+class PartTurboType < ActiveRecord::Base
+  self.table_name ='part_turbo_type'
+  self.primary_key = "part_id"
+end

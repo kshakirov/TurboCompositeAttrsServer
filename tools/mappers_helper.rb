@@ -49,3 +49,16 @@ end
 def make_batch_future id, worker
   worker.future.set_attribute(id)
 end
+
+def stage_body group, worker, stage_name
+  futures = []
+  ids = group.map do |part|
+    futures.push make_batch_future(part.id, worker)
+    part.id
+  end
+  puts "#{stage_name} Stage  Ids   => " + ids.join(",")
+  initial_size = futures.size
+  until are_futures_ready?(futures, initial_size)
+    futures = remove_resolved_futures futures
+  end
+end

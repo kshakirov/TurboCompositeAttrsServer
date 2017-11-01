@@ -38,14 +38,14 @@ end
 
 puts "Starting Second and Half Stage "
 Part.joins(:part_type).where(part_type: {name: 'Turbo'}).
-    find_in_batches(batch_size: 100).map do |group|
-  stage_body(group, second_and_half_worker, "Zero ")
+    find_in_batches(batch_size: pool_size).map do |group|
+  stage_body(group, second_and_half_worker, "Second and Half  ")
 end
 
 puts "Starting Third  Stage "
 Part.joins(:part_type).where( part_type: {name: ["Cartridge","Turbo"]}).
-    find_in_batches(batch_size: 100).map do |group|
-  stage_body(group, third_worker, "Zero ")
+    find_in_batches(batch_size: pool_size).map do |group|
+  stage_body(group, third_worker, "Third ")
 end
 
 

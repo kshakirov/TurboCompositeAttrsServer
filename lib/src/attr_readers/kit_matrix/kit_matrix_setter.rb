@@ -81,8 +81,8 @@ class KitMatrixSetter
   end
 
   def get_parent_turbo_service_kits sku
-    parents =@where_used_getter.get_cached_where_used sku
-    unless parents.nil?
+    parents =@where_used_getter.get_cached_where_used(sku) || []
+    unless parents.empty?
       paretn_turbo_sku =parents.keys.first
       @service_kit_getter.get_cached_sk paretn_turbo_sku
     end

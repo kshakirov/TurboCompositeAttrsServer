@@ -15,6 +15,7 @@ zero_worker = ZeroStageWorker.pool size: pool_size, args: [redis_cache]
 first_worker = FirstStageWorker.pool size: pool_size, args: [redis_cache, graph_service_url]
 second_worker = SecondStageWorker.pool size: pool_size, args: [redis_cache, graph_service_url]
 fourth_worker = FourthStageWorker.pool size: pool_size, args: [redis_cache]
+third_worker = ThirdStageWorker.pool size: pool_size, args: [redis_cache]
 second_and_half_worker = SecondAndHalfStageWorker.pool size: pool_size, args: [redis_cache]
 
 
@@ -40,6 +41,13 @@ Part.joins(:part_type).where(part_type: {name: 'Turbo'}).
     find_in_batches(batch_size: 100).map do |group|
   stage_body(group, second_and_half_worker, "Zero ")
 end
+
+puts "Starting Third  Stage "
+Part.joins(:part_type).where( part_type: {name: ["Cartridge","Turbo"]}).
+    find_in_batches(batch_size: 100).map do |group|
+  stage_body(group, third_worker, "Zero ")
+end
+
 
 puts "Starting Standard Oversize Stage "
 Part.joins(:part_type).where(part_type: {

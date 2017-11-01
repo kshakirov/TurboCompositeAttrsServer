@@ -9,7 +9,7 @@ class TestServiceKitsAttrsReader < MiniTest::Unit::TestCase
   def test_service_kit_setter
     setter = ServiceKitSetter.new @redis_cache
     setter.set_service_kit_attribute 13958
-    setter.set_service_kit_attribute 6703
+    setter.set_service_kit_attribute 11036
   end
 
   def test_service_kit_gettter

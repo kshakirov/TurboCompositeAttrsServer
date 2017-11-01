@@ -62,6 +62,8 @@ class ServiceKitBuilder
             sk[:sku] =  s[:id]
           end
           sk[:description] = s[:description]
+          sk[:manufacturer] = s[:manfr]
+          sk[:sku] =  s[:id]
           sk
       end
   end

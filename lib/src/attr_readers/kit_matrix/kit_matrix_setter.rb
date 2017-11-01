@@ -1,9 +1,10 @@
 class KitMatrixSetter
 
   def initialize redis_host
-    @kit_matrix = ServiceKitsAttrReader.new
-    @redis_cache = RedisCache.new(Redis.new(:host => redis_host, :db => 3))
+    @redis_cache = redis_host
     @bom_getter = BomGetter.new @redis_cache
+    @where_used_getter = WhereUsedGetter.new @redis_cache
+    @service_kit_getter = ServiceKitGetter.new @redis_cache
   end
 
   def _base_header_array
@@ -59,43 +60,49 @@ class KitMatrixSetter
 
   def add_part_data part
     {
-        :manufacturer => part.manfr.name,
-        :part_number => part.manfr_part_num,
-        :sku => part.id,
-        :bom => get_only_ti_boms(part.id)
+        :manufacturer => part[:manufacturer],
+        :part_number => part[:ti_part_number] || part[:part_number],
+        :sku => part[:sku],
+        :bom => get_only_ti_boms(part[:sku])
     }
   end
 
-  def bulk_get_part kit_matrix_array
-    parts = Part.eager_load(:manfr).find kit_matrix_array
-    Hash[parts.map { |p| [p.id.to_s.to_sym, add_part_data(p)] }]
-  end
-
-  def create_kit_matrix_array kit_matrix_headers
-    kit_matrix_headers.map do |kit|
-      if kit[:tiSku]
-        kit[:tiSku]
-      else
-        kit[:sku]
-      end
+  def bulk_get_part service_kits
+    Hash[service_kits.map do |sk|
+      [sk[:sku].to_s.to_sym, add_part_data(sk)]
     end
+    ]
   end
 
 
-  def create_kit_matrix_table kit_matrix_headers
-    kit_matrix_array = create_kit_matrix_array kit_matrix_headers
-    kit_matrix_hash = bulk_get_part kit_matrix_array
+  def create_kit_matrix_table service_kits
+    kit_matrix_hash = bulk_get_part service_kits
     _create_kit_matrix_table kit_matrix_hash
   end
 
+  def get_parent_turbo_service_kits sku
+    parents =@where_used_getter.get_cached_where_used sku
+    unless parents.nil?
+      paretn_turbo_sku =parents.keys.first
+      @service_kit_getter.get_cached_sk paretn_turbo_sku
+    end
+  end
 
   def cache_kit_matrix sku, kit_matrixes
     @redis_cache.set_cached_response sku, 'kit_matrix', kit_matrixes
   end
 
   def set_kit_matrix_attribute sku
-    kit_matrix_headers = @kit_matrix.get_attribute sku
-    kit_matrixes = create_kit_matrix_table kit_matrix_headers
-    cache_kit_matrix sku, kit_matrixes
+    service_kits = @service_kit_getter.get_cached_sk sku
+    if not service_kits
+      service_kits = get_parent_turbo_service_kits(sku)
+      if service_kits
+        kit_matrixes = create_kit_matrix_table service_kits
+        cache_kit_matrix sku, kit_matrixes
+      end
+    else
+      kit_matrixes = create_kit_matrix_table service_kits
+      cache_kit_matrix sku, kit_matrixes
+    end
   end
 end

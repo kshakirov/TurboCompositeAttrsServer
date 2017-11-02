@@ -3,14 +3,14 @@ class GasketTurboSetter
   def initialize redis_cache
     @gasket_turbo_reader = GasketTurboReader.new redis_cache
     @redis_cache = redis_cache
-    @price_reader = PriceAttrReader.new(@redis_cache)
+    @price_getter = PriceGetter.new(@redis_cache)
   end
 
   private
 
   def add_prices gasket_turbo
     unless gasket_turbo[:ti_id].nil?
-      gasket_turbo[:prices] = @redis_cache.get_cached_response(gasket_turbo[:ti_id], "price")
+      gasket_turbo[:prices] = @price_getter.get_price_attribute(gasket_turbo[:ti_id])
     end
     gasket_turbo
   end

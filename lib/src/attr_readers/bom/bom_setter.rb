@@ -5,12 +5,12 @@ class BomSetter
   def initialize redis_cache, graph_service_url
     @bom_reader = BomReader.new graph_service_url
     @redis_cache =  redis_cache
-    @price_reader = PriceAttrReader.new(@redis_cache)
+    @price_getter = PriceGetter.new(@redis_cache)
     @bom_builder = BomBuilder.new redis_cache
   end
 
-  def get_prices bom_ids
-    @price_reader.get_attribute(bom_ids)
+  def get_prices bom_skus
+    @price_getter.bulk_get_price_attribute(bom_skus)
   end
 
   def build_bom_dto boms
@@ -21,7 +21,7 @@ class BomSetter
     @bom_reader.get_attribute sku
   end
 
-  def get_boms_ids bom_list
+  def get_boms_skus bom_list
     bom_list.compact!
     bom_list.map { |b| b[:sku] }
   end
@@ -47,8 +47,8 @@ class BomSetter
   def set_bom_attribute sku
     boms = query_bom_service(sku) || Array.new
     boms_dto = build_bom_dto(boms)
-    boms_ids = get_boms_ids(boms_dto)
-    boms_prices = get_prices(boms_ids)
+    boms_skus = get_boms_skus(boms_dto)
+    boms_prices = get_prices(boms_skus)
     boms_dto = add_prices_to_boms_list(boms_dto, boms_prices)
     cache_bom(sku, 'bom', boms_dto)
   end

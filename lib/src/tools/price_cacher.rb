@@ -1,7 +1,7 @@
 class PriceCacher
   def initialize
     @redis_cache = RedisCache.new(Redis.new(:host => "redis", :db => 3))
-    @price_reader = PriceAttrReader.new @redis_cache
+    @price_getter = PriceAttrReader.new @redis_cache
     @price_comparator = PriceAttributeComparator.new
     @fd = File.new("price_changes.dat", "w")
   end
@@ -18,14 +18,14 @@ class PriceCacher
 
   def _cache_product_prices ids, prices
     ids.each_with_index do |id, index|
-      unless compare_prices(prices[index], @price_reader.get_price(id))
+      unless compare_prices(prices[index], @price_getter.get_price(id))
         @redis_cache.set_cached_response id, "price", prices[index]
       end
     end
   end
 
   def put ids
-    prices = @price_reader.get_rest_prices ids
+    prices = @price_getter.get_rest_prices ids
     _cache_product_prices ids, prices
   end
 end

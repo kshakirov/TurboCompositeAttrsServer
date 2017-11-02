@@ -21,7 +21,7 @@ class Public < Sinatra::Base
 
   configure do
     set :redis_client, RedisCache.new(Redis.new(
-        :host => self.send(ENV['RACK_ENV'])['rabbit_host'], :db => 3))
+        :host => self.send(ENV['RACK_ENV'])['redis_host'], :db => 3))
     set :where_used_reader, WhereUsedGetter.new(settings.redis_client)
     set :bom_reader, BomGetter.new(settings.redis_client)
     set :interchange_reader, InterchangeGetter.new(settings.redis_client)

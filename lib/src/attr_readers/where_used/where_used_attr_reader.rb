@@ -16,9 +16,11 @@ class WhereUsedAttrReader
     url = "#{@graph_service_url}/parts/#{id}/ancestors"
     begin
       response =  RestClient::Request.execute(:method => :get, :url => url, :timeout => 60, :open_timeout => 60,
-                                              :headers => {'Connection' => 'close'})
+                                              :headers => {
+                                                  'Connection' => 'close'
+                                              })
       JSON.parse response.body
-    rescue Exception => e
+    rescue StandardError  => e
       if (tries -= 1) > 0
         time_to_sleep = @range.rand(3.5)
         puts " Sku [#{id}], Attempt [#{tries.to_s}], Sleeping #{time_to_sleep} sec ... "

@@ -17,7 +17,7 @@ class RedisCache
       else
         false
       end
-    rescue Exception => e
+    rescue StandardError => e
       puts "Problems with getting response for product [#{sku}]"
       false
     end

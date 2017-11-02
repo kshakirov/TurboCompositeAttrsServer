@@ -3,12 +3,12 @@ class ServiceKitSetter
   def initialize redis_cache
     @service_kits = ServiceKitsAttrReader.new
     @redis_cache = redis_cache
-    @price_reader = PriceAttrReader.new(@redis_cache)
+    @price_getter = PriceGetter.new(@redis_cache)
     @builder = ServiceKitBuilder.new @redis_cache
   end
 
-  def get_prices ids
-    @price_reader.get_attribute ids
+  def get_prices skus
+    @price_getter.bulk_get_price_attribute skus
   end
 
   def get_skus service_kits_list

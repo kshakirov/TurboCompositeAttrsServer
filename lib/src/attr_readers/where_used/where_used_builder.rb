@@ -94,7 +94,9 @@ class WhereUsedBuilder
   def add_turbo_partnumbers wus, turbos
     wus.map do |wu|
       if is_cartridge? wu and not turbos.nil?
-        wu[:turboPartNumbers] = turbos.to_a.join(", ")
+        wu[:turboPartNumbers] = turbos.to_a
+      else
+        wu[:turboPartNumbers] = []
       end
       wu
     end

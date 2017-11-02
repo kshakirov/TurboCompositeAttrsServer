@@ -3,12 +3,12 @@ class WhereUsedSetter
     @where_used_reader = WhereUsedAttrReader.new graph_service_url
     @where_used_builder = WhereUsedBuilder.new redis_cache
     @redis_cache = redis_cache
-    @price_reader = PriceAttrReader.new(@redis_cache)
+    @price_getter = PriceGetter.new(@redis_cache)
   end
 
   def get_prices wus
-    ids = wus.map{|w| w[:sku]}
-    @price_reader.get_attribute ids
+    skus = wus.map{|w| w[:sku]}
+    @price_getter.bulk_get_price_attribute skus
   end
 
   def add_prices_to_response response, prices

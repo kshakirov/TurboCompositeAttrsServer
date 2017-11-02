@@ -1,7 +1,7 @@
 class KitMatrixSetter
 
-  def initialize redis_host
-    @redis_cache = redis_host
+  def initialize redis_cache
+    @redis_cache = redis_cache
     @bom_getter = BomGetter.new @redis_cache
     @where_used_getter = WhereUsedGetter.new @redis_cache
     @service_kit_getter = ServiceKitGetter.new @redis_cache

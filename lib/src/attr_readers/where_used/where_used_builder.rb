@@ -55,24 +55,34 @@ class WhereUsedBuilder
     }
   end
 
-  def bulk_get_turbo_model ids
-    models = Turbo.eager_load(:turbo_model).find ids
-    ids.map do |id|
+  def bulk_get_turbo_with_model ids
+    Turbo.eager_load(:turbo_model).find ids
+  end
+
+  def bulk_get_turbo_type_id turbo_model
+    turbo_model.map do |tm|
       {
-          sku: id,
-          turbo_type_id: (models.find { |m| m.id == id }).turbo_model.turbo_type_id
+          sku: tm.part_id,
+          turbo_type_id: tm.turbo_model.turbo_type_id,
       }
     end
   end
 
-  def bulk_get_turbo_type models
-    turbo_types_ids = models.map { |m| m[:turbo_type_id] }
+  def bulk_get_turbo_type_name turbo_type_ids
+    turbo_types_ids = turbo_type_ids.map { |m| m[:turbo_type_id] }
     turbo_types = TurboType.find turbo_types_ids
-    models.map do |m|
+    turbo_type_ids.map do |m|
       {
           sku: m[:sku],
-          turbo_type_name: (turbo_types.find { |tt| tt.id == m[:turbo_type_id] }).name
+          turbo_type_name: (turbo_types.find { |tt| tt.id == m[:turbo_type_id] }).name,
       }
+    end
+  end
+
+  def get_model_name sku, turbo_model
+    turbo = turbo_model.find{|tm| tm.part_id == sku}
+    unless turbo.nil?
+      turbo.turbo_model.name
     end
   end
 
@@ -80,12 +90,14 @@ class WhereUsedBuilder
   def add_turbo_type wus
     turbos = wus.select { |wu| is_turbo? wu }
     turbos_ids = turbos.map { |t| t[:sku] }
-    models = bulk_get_turbo_model turbos_ids
-    turbo_types_names = bulk_get_turbo_type models
+    turbo_model = bulk_get_turbo_with_model turbos_ids
+    turbo_type_ids = bulk_get_turbo_type_id turbo_model
+    turbo_types_names = bulk_get_turbo_type_name turbo_type_ids
     wus.map do |wu|
       t_name = turbo_types_names.find { |tt| tt[:sku] == wu[:sku] }
       unless t_name.nil?
         wu[:turboType] = t_name[:turbo_type_name]
+        wu[:turboModel]=  get_model_name(wu[:sku],turbo_model)
       end
       wu
     end

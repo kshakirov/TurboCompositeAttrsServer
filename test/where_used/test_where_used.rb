@@ -12,6 +12,8 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
     setter = WhereUsedSetter.new @redis_cache, @service_configuration
     setter.set_where_used_attribute 49639
     setter.set_where_used_attribute 6242
+    setter.set_where_used_attribute 42128
+    setter.set_where_used_attribute 25179
 
   end
 

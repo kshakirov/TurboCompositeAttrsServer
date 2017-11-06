@@ -7,9 +7,9 @@ development:
   graphdb_service: 'localhost:9009'
 
 staging:
-  redis_host:  'localhost'
+  redis_host:  '10.192.104.100'
   graphdb_service: '10.192.104.70:9009'
 
 production:
-  redis_host:  'localhost'
+  redis_host:  '10.192.104.100'
   graphdb_service: '10.192.104.70:9009'

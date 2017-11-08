@@ -5,9 +5,11 @@ require_relative 'zero_stage_worker'
 require_relative 'third_stage_worker'
 require_relative 'fourth_stage_worker'
 require_relative 'second_and_half'
+require_relative 'third_and_half_worker'
 
 
-pool_size = ARGV[0].to_i || 4
+pool_size = ARGV[0].to_i
+pool_size ||= 4
 redis_host = get_redis_host
 redis_cache = RedisCache.new(Redis.new(:host => redis_host, :db => 3))
 graph_service_url = get_service_configuration
@@ -16,6 +18,7 @@ first_worker = FirstStageWorker.pool size: pool_size, args: [redis_cache, graph_
 second_worker = SecondStageWorker.pool size: pool_size, args: [redis_cache, graph_service_url]
 fourth_worker = FourthStageWorker.pool size: pool_size, args: [redis_cache]
 third_worker = ThirdStageWorker.pool size: pool_size, args: [redis_cache]
+third__and_half_worker = ThirdAndHalfStageWorker.pool size: pool_size, args: [redis_cache]
 second_and_half_worker = SecondAndHalfStageWorker.pool size: pool_size, args: [redis_cache]
 
 
@@ -48,6 +51,11 @@ puts "Starting Third  Stage "
 Part.joins(:part_type).where(part_type: {name: ["Cartridge", "Turbo"]}).
     find_in_batches(batch_size: pool_size).map do |group|
   stage_body(group, third_worker, "Third ")
+end
+
+puts "Starting Third and Half  Stage "
+Part.find_in_batches(batch_size: pool_size).each do |group|
+  stage_body(group, third__and_half_worker, "Third and Half ")
 end
 
 

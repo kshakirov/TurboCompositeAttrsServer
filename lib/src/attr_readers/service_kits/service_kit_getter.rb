@@ -2,7 +2,6 @@ class ServiceKitGetter
 
   def initialize redis_cache
     @redis_cache =  redis_cache
-    @decriptor = CustomerInfoDecypher.new
     @price_manager = ServiceKitPriceManager.new
   end
 

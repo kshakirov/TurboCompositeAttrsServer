@@ -1,5 +1,5 @@
 class ZeroStageWorker
-
+  include Celluloid
   def initialize redis_cache
     @price_setter = PriceSetter.new redis_cache
   end

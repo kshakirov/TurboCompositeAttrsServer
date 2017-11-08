@@ -20,6 +20,7 @@ class TestApplicationReader < MiniTest::Unit::TestCase
     setter = ApplicationSetter.new @redis_cache
     setter.set_application_attribute 6524
     setter.set_application_attribute 43745
+    setter.set_application_attribute  6392
   end
 
 end

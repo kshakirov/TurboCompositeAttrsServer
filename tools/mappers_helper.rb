@@ -9,7 +9,7 @@ require 'logger'
 require 'time_difference'
 require_relative "../lib/server.rb"
 
-unless  ENV['RACK_ENV']
+unless ENV['RACK_ENV']
   puts "SET RACK_ENV = [production,development,staging,test]  then try again .."
   exit(1)
 end
@@ -57,6 +57,19 @@ def stage_body group, worker, stage_name
     part.id
   end
   puts "#{stage_name} Stage  Ids   => " + ids.join(",")
+  initial_size = futures.size
+  until are_futures_ready?(futures, initial_size)
+    futures = remove_resolved_futures futures
+  end
+end
+
+def stage_bulk_body groups, worker, stage_name
+  futures = []
+  groups.each_slice(100) do |group|
+    ids = group.map {|p| p.id}
+    futures.push make_batch_future(ids, worker)
+    puts "#{stage_name} Stage  Ids   => " + ids.join(",")
+  end
   initial_size = futures.size
   until are_futures_ready?(futures, initial_size)
     futures = remove_resolved_futures futures

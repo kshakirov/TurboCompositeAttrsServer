@@ -13,7 +13,7 @@ pool_size ||= 4
 redis_host = get_redis_host
 redis_cache = RedisCache.new(Redis.new(:host => redis_host, :db => 3))
 graph_service_url = get_service_configuration
-zero_worker = ZeroStageWorker.new redis_cache
+zero_worker = ZeroStageWorker.pool size: pool_size, args: [redis_cache]
 first_worker = FirstStageWorker.pool size: pool_size, args: [redis_cache, graph_service_url]
 second_worker = SecondStageWorker.pool size: pool_size, args: [redis_cache, graph_service_url]
 fourth_worker = FourthStageWorker.pool size: pool_size, args: [redis_cache]
@@ -24,11 +24,10 @@ second_and_half_worker = SecondAndHalfStageWorker.pool size: pool_size, args: [r
 
 puts "Starting Price Stage"
 
+price_batch_size = 100 * pool_size
 Part.joins(:manfr).where(manfr: {name: 'Turbo International'}).
-    find_in_batches(batch_size: 100).map do |group|
-  skus = group.map {|p| p.id}
-  zero_worker.set_attribute skus
-  puts "Price  Stage  Ids   => " + skus.join(",")
+    find_in_batches(batch_size: price_batch_size).map do |groups|
+  stage_bulk_body(groups, zero_worker, "Zero ")
 end
 
 puts "Starting First Stage "

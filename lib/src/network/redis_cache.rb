@@ -1,5 +1,25 @@
 class RedisCache
+  private
+  def parse_response response
+    if not response.nil? and not response == 'null'
+      JSON.parse response, {
+          :symbolize_names => true
+      }
+    end
+  end
 
+  def parse_m_response m_response
+    parsed = m_response.map do |mr|
+      parse_response mr
+    end
+    parsed.compact
+  end
+
+  def prep_mget_keys keys, attr
+    keys.map{|key| "#{key}_#{attr}"}
+  end
+
+  public
   def initialize redis_client
     @redis_cache = redis_client
   end
@@ -20,6 +40,17 @@ class RedisCache
     rescue StandardError => e
       puts "Problems with getting response for product [#{sku}]"
       false
+    end
+  end
+
+
+  def mget_cached_response skus, attr
+    keys = prep_mget_keys skus, attr
+    begin
+      m_response = @redis_cache.mget(keys)
+      parse_m_response(m_response)
+    rescue StandardError => e
+      puts "Problems with getting response"
     end
   end
 

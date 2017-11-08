@@ -8,6 +8,10 @@ class WhereUsedGetter
     @redis_cache.get_cached_response sku, 'where_used'
   end
 
+  def mget_cached_where_used skus
+    @redis_cache.mget_cached_response skus,'where_used'
+  end
+
   def get_where_used_attribute sku, id
     wus = get_cached_where_used sku
     if id.nil?

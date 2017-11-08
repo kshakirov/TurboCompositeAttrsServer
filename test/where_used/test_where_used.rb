@@ -14,6 +14,7 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
     setter.set_where_used_attribute 6242
     setter.set_where_used_attribute 42128
     setter.set_where_used_attribute 25179
+    setter.set_where_used_attribute 6700
 
   end
 

@@ -18,4 +18,11 @@ class TestDecriptor < Minitest::Unit::TestCase
     keys.each{|k| redis.del k}
   end
 
+  def test_mget_read
+    redis = Redis.new(:host => @redis_host, :db => 3)
+    keys = ['8010_interchanges','47324_interchanges']
+    resp = redis.mget(keys)
+    assert resp
+  end
+
 end

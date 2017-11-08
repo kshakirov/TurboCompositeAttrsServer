@@ -3,7 +3,6 @@ class BomGetter
 
   def initialize redis_cache
     @redis_cache = redis_cache
-    @decriptor = CustomerInfoDecypher.new
     @major_component_builder = MajorComponent.new
     @price_manager = BomPriceManager.new
   end

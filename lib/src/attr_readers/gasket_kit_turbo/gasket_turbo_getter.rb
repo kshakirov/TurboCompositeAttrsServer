@@ -2,12 +2,10 @@ class GasketTurboGetter
   extend Forwardable
   def_delegator :@price_manager, :remove_price, :remove_price
   def_delegator :@price_manager, :add_group_price, :add_group_price
-  def_delegator :@decriptor, :get_customer_group, :get_customer_group
 
   def initialize redis_cache=RedisCache.new(Redis.new(:host => "redis", :db => 3))
     @redis_cache = redis_cache
     @price_manager = GasketTurboPriceManager.new
-    @decriptor = CustomerInfoDecypher.new
   end
 
   def get_cached_gasket_turbo sku

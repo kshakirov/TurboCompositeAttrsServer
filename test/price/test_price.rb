@@ -7,6 +7,7 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
     redis_cache = RedisCache.new(Redis.new(:host => redis_host, :db => 3))
     @price_getter = PriceAttrReader.new
     @price_setter = PriceSetter.new redis_cache
+    @price_getter = PriceGetter.new redis_cache
   end
 
   def test_price_reader
@@ -21,7 +22,7 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
   end
 
   def test_price_getter
-
+      @price_getter.get_price_attribute
   end
 
 end

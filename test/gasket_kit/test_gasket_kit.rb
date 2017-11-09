@@ -13,8 +13,8 @@ class TestGasketKit < MiniTest::Unit::TestCase
     turbos = @gasket_kit_reader.get_attribute 69079
     refute_nil turbos
     assert_equal 5, turbos.size
-    assert turbos.find{|t| t[:id] == 10072}
-    assert turbos.find{|t| t[:id] == 36359}
+    assert (turbos.find {|t| t[:id] == 10072})
+    assert (turbos.find {|t| t[:id] == 36359})
   end
 
   def test_gasket_kit_setter
@@ -23,15 +23,15 @@ class TestGasketKit < MiniTest::Unit::TestCase
   end
 
   def test_gasket_kit_getter
-    turbos =  @gasket_kit_getter.get_gasket_kit_attribute 69079, '4mA2wAME2WZ1J4kWsUyi9w=='
+    turbos = @gasket_kit_getter.get_gasket_kit_attribute 69079, 'E'
 
     assert_equal 5, turbos.size
-    assert turbos.find{|t| t[:id] == 10072}
-    assert turbos.find{|t| t[:id] == 36359}
-   end
+    assert (turbos.find {|t| t[:id] == 10072})
+    assert (turbos.find {|t| t[:id] == 36359})
+  end
 
   def test_reader
-    kits = @gasket_kit_reader.get_attribute(69079)
+    kits = @gasket_kit_reader.get_attribute(7189)
     refute_nil kits
   end
 

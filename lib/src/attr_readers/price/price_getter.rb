@@ -4,7 +4,7 @@ class PriceGetter
   end
 
   def get_cached_price sku
-    @redis_cache.get_cached_response sku, 'kit_matrix'
+    @redis_cache.get_cached_response sku, 'price'
   end
 
   def bulk_get_price_attribute skus

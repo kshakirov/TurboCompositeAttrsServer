@@ -5,9 +5,9 @@ class BomReader
   end
 
 
-  def query_service sku, distance=1
+  def query_service sku, distance=10
     tries ||= 10
-    url = "#{@graph_service_url}/parts/#{sku}/boms"
+    url = "#{@graph_service_url}/parts/#{sku}/boms?distance=#{distance}"
     begin
       response =  RestClient::Request.execute(:method => :get, :url => url, :timeout => 60, :open_timeout => 60,
                                               :headers => {'Connection' => 'close'})

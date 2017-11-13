@@ -47,6 +47,8 @@ class TestBomAttrsReader < MiniTest::Unit::TestCase
       boms  =reader.get_attribute 840
       assert boms
       assert_equal 5, boms.size
+      boms  =reader.get_attribute 6583
+      assert boms
   end
 
   def get_part_by_sku attrs, sku

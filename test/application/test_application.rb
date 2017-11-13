@@ -25,6 +25,7 @@ class TestApplicationReader < MiniTest::Unit::TestCase
 
   def test_setter_sorted
     setter = ApplicationSetter.new @redis_cache
+    setter.set_application_attribute 4
     setter.set_application_attribute 6583
     setter.set_application_attribute 1812
   end

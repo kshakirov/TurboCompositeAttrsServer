@@ -10,9 +10,9 @@ class TestApplicationReader < MiniTest::Unit::TestCase
 
   def test_reader
     reader = ApplicationReader.new @redis_cache
-    attrs = reader.get_attribute  6524
+    attrs = reader.get_attribute 6524
     assert_equal 41, attrs.size
-    attrs = reader.get_attribute  43745
+    attrs = reader.get_attribute 43745
     assert_equal 54, attrs.size
   end
 
@@ -20,7 +20,14 @@ class TestApplicationReader < MiniTest::Unit::TestCase
     setter = ApplicationSetter.new @redis_cache
     setter.set_application_attribute 6524
     setter.set_application_attribute 43745
-    setter.set_application_attribute  6392
+    setter.set_application_attribute 6392
   end
+
+  def test_setter_sorted
+    setter = ApplicationSetter.new @redis_cache
+    setter.set_application_attribute 6583
+    setter.set_application_attribute 1812
+  end
+
 
 end

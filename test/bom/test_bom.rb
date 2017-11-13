@@ -44,9 +44,9 @@ class TestBomAttrsReader < MiniTest::Unit::TestCase
 
   def test_bom_read
       reader = BomReader.new @service_configuration
-      boms  =reader.get_attribute 6392
+      boms  =reader.get_attribute 840
       assert boms
-      boms.map{|b| p  b['partId'] }
+      assert_equal 5, boms.size
   end
 
   def get_part_by_sku attrs, sku

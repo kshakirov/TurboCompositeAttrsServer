@@ -111,8 +111,8 @@ class BomBuilder
   end
 
   def pair_bom_and_parts boms, parts
-    parts.map do |part|
-      bom = boms.find { |bom| bom['partId'] == part.id.to_s }
+    boms.map do |bom|
+      part  = parts.find { |p| bom['partId'] == p.id.to_s }
       [bom, part]
     end
   end

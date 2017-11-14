@@ -19,6 +19,7 @@ class TestBomAttrsReader < MiniTest::Unit::TestCase
     setter.set_bom_attribute 840
     setter.set_bom_attribute 61643
     setter.set_bom_attribute 68157
+    setter.set_bom_attribute 6583
     end
 
    def test_bom_get

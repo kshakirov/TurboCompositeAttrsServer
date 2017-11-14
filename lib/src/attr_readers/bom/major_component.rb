@@ -1,6 +1,10 @@
 class MajorComponent
+  def initialize
+    parent_type_id = 9
+    @major_components = PartType.where(parent_part_type_id: parent_type_id)
+  end
   def is_major_component? bom
-    bom[:part_type_parent] == 'major_component'
+    @major_components.find{|mc| mc.name == bom[:part_type]}
   end
 
   def is_cartridge bom

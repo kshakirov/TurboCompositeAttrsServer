@@ -2,8 +2,6 @@ class MajorComponent
   def initialize
     parent_type_id = 9
     @major_components = PartType.where(parent_part_type_id: parent_type_id).map{|p| p.name}
-    @major_components.push "Seal Plate"
-    @major_components.push "Actuator"
   end
   def is_major_component? bom
     @major_components.find{|mc| mc.downcase == bom[:part_type].downcase}

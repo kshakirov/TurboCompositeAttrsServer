@@ -12,6 +12,12 @@ class ApplicationReader
     end
   end
 
+  def get_fuel_type car_engine
+    unless car_engine.nil?
+      check_nil_relation(car_engine.car_fuel_type, :name)
+    end
+  end
+
   def dto_apps_base applications
     applications.map do |app|
       {
@@ -19,7 +25,8 @@ class ApplicationReader
           model_id: app.car_model_id,
           make: nil,
           engine_size: check_nil_relation(app.car_engine, :engine_size),
-          year: check_nil_relation(app.car_year, :name)
+          year: check_nil_relation(app.car_year, :name),
+          fuel_type: get_fuel_type(app.car_engine)
       }
     end
   end
@@ -44,7 +51,7 @@ class ApplicationReader
     turbos_ids = turbos.map {|t| t[:sku]}
     turbos_ids = turbos_ids.to_set
     car_model_eng_year_ids = TurboCarModelEngineYear.where(part_id: turbos_ids.to_a).map {|c| c.car_model_engine_year_id}
-    applications = CarModelEngineYear.eager_load(:car_model, :car_year, :car_engine).where(id: car_model_eng_year_ids)
+    applications = CarModelEngineYear.eager_load(:car_model, :car_year, :car_engine).where(id: car_model_eng_year_ids).all
     applications = dto_apps_base(applications)
     makes = get_make(applications)
     dto_apps_make applications, makes

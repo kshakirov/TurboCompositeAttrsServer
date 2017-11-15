@@ -11,6 +11,10 @@ class TestMajorComponentsReader < MiniTest::Unit::TestCase
     getter = BomGetter.new @redis_cache
     attrs = getter.get_major_component  6991,  'E'
     assert_equal 6, attrs.size
+    attrs = getter.get_major_component 27402, 'E'
+    assert_equal 6, attrs.size
+    attrs = getter.get_major_component 14066, 'E'
+    assert_equal 8, attrs.size
   end
 
 end

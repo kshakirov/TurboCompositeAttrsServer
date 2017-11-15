@@ -15,7 +15,7 @@ class ServiceKitsAttrReader
         turbo_type_id =  turbo.turbo_model.turbo_type_id
         types = PartTurboType.where(turbo_type_id: turbo_type_id).all
         ids = types.map{|t| t.part_id}
-        kits  =Part.eager_load(:manfr).where(id: ids, part_type_id: 3).all
+        kits  =Part.eager_load(:manfr).where(id: ids, part_type_id: 3, inactive: false).all
         expand_kits(kits)
 
   end

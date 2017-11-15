@@ -18,7 +18,7 @@ class ServiceKitBuilder
   def get_ti_interchange sk
     interchanges  = @interchange_getter.get_cached_interchange(sk[:sku])
     if interchanges
-      ti_part  = interchanges.find{|i| i[:manufacturer] == "Turbo International"}
+      ti_part  = interchanges.find{|i| i[:manufacturer] == "Turbo International" and not i[:inactive]}
        if ti_part and not  ti_part.empty?
         sk[:ti_part_number] = ti_part[:part_number]
          sk[:tiSku] = ti_part[:id]

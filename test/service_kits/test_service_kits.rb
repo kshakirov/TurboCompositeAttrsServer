@@ -10,6 +10,7 @@ class TestServiceKitsAttrsReader < MiniTest::Unit::TestCase
     setter = ServiceKitSetter.new @redis_cache
     setter.set_service_kit_attribute 13958
     setter.set_service_kit_attribute 11036
+    setter.set_service_kit_attribute 27286
   end
 
   def test_service_kit_gettter
@@ -17,6 +18,10 @@ class TestServiceKitsAttrsReader < MiniTest::Unit::TestCase
     attrs = getter.get_service_kit_attribute  13958,  'E'
     assert_equal 49, attrs.size
     assert_equal 42.68,   attrs.last[:prices]
+    attrs = getter.get_service_kit_attribute  27286,  'E'
+    assert_equal 61, attrs.size
+    inactive = attrs.find{|a| a[:ti_part_number]=='7-A-0019'}
+    assert_nil inactive
   end
 
   def test_reader

@@ -7,7 +7,7 @@ class WhereUsedSetter
   end
 
   def get_prices wus
-    skus = wus.map{|w| w[:sku]}
+    skus = wus.map {|w| w[:sku]}
     @price_getter.bulk_get_price_attribute skus
   end
 
@@ -21,8 +21,8 @@ class WhereUsedSetter
     end
   end
 
-  def dto_where_useds wus
-    @where_used_builder.build wus
+  def dto_where_useds wus, part_type
+    @where_used_builder.build wus, part_type
   end
 
   def cache_where_used sku, wus
@@ -30,22 +30,27 @@ class WhereUsedSetter
   end
 
   def query_where_used_service sku
-     @where_used_reader.get_attribute(sku)
+    wus = @where_used_reader.get_attribute(sku)
+    wus ||= []
   end
 
   def conv_array_to_hash wus
-      Hash[wus.map{|wu| [wu[:sku],wu]}]
+    Hash[wus.map {|wu| [wu[:sku], wu]}]
+  end
+
+  def get_part_type sku
+    part = Part.eager_load(:part_type).find sku
+    part.part_type.name
   end
 
   def set_where_used_attribute sku
+    part_type = get_part_type(sku)
     wus = query_where_used_service sku
-    unless wus.nil?
-      wus = dto_where_useds(wus)
-      prices =  get_prices(wus)
-      wus = conv_array_to_hash wus
-      add_prices_to_response wus, prices
-      cache_where_used sku, wus
-      wus
-    end
+    wus = dto_where_useds(wus, part_type)
+    prices = get_prices(wus)
+    wus = conv_array_to_hash wus
+    add_prices_to_response wus, prices
+    cache_where_used sku, wus
+    wus
   end
 end

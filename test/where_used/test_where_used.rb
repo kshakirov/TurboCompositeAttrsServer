@@ -10,30 +10,30 @@ class TestProductsAttrsReader < MiniTest::Unit::TestCase
 
   def test_where_used_setter
     setter = WhereUsedSetter.new @redis_cache, @service_configuration
-    setter.set_where_used_attribute 49639
+    setter.set_where_used_attribute 42873
     setter.set_where_used_attribute 6242
-    setter.set_where_used_attribute 42128
-    setter.set_where_used_attribute 25179
-    setter.set_where_used_attribute 6700
 
   end
 
   def test_where_used_getter
     getter = WhereUsedGetter.new @redis_cache
-    attrs = getter.get_where_used_attribute  49639,  'E'
-    assert_equal  'Cartridge', attrs['4742'.to_sym][:partType]
-    assert_equal  'CHRA, CT10', attrs['6673'.to_sym][:description]
-    refute_nil attrs['6673'.to_sym][:prices]
-    assert_equal  117.8, attrs['6673'.to_sym][:prices]
+    attrs = getter.get_where_used_attribute  6242,  'E'
+    assert_equal  attrs.keys.size, 4
+    attrs = getter.get_where_used_attribute  42873,  'E'
+    assert_equal  attrs.keys.size, 47
+    assert attrs.values.find{|a| a[:partNumber]=='409172-0009'}
+    assert attrs.key? 625.to_s.to_sym
+    assert_equal "409172-0106", attrs[464.to_s.to_sym][:partNumber]
+    assert_equal %W( 466674-0005 2674A076),attrs[464.to_s.to_sym][:turboPartNumbers]
 
   end
 
   def test_reader
     reader = WhereUsedAttrReader.new @service_configuration
     wus = reader.get_attribute  6242
-    assert wus.size > 0
+    assert_equal  wus.size, 4
     wus = reader.get_attribute  42768
-    assert_equal 319,  wus.size
+    assert_equal 318,  wus.size
   end
 
   def test_manufacturer

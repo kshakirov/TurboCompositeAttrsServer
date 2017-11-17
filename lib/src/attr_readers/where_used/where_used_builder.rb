@@ -4,6 +4,7 @@ class WhereUsedBuilder
     @manufacturer = ManufacturerSingleton.instance
     @part_type = PartTypeSingleton.instance
     @interchanges_getter = InterchangeGetter.new redis_cache
+    @where_used_getter = WhereUsedGetter.new redis_cache
   end
 
   def is_ti_manufactured? value
@@ -27,7 +28,7 @@ class WhereUsedBuilder
   end
 
   def find_ti_interchange interchanges
-    interchanges.find { |i| is_int_ti_manufacturer(i) }
+    interchanges.find {|i| is_int_ti_manufacturer(i)}
   end
 
   def get_ti_part sku
@@ -69,18 +70,18 @@ class WhereUsedBuilder
   end
 
   def bulk_get_turbo_type_name turbo_type_ids
-    turbo_types_ids = turbo_type_ids.map { |m| m[:turbo_type_id] }
+    turbo_types_ids = turbo_type_ids.map {|m| m[:turbo_type_id]}
     turbo_types = TurboType.find turbo_types_ids
     turbo_type_ids.map do |m|
       {
           sku: m[:sku],
-          turbo_type_name: (turbo_types.find { |tt| tt.id == m[:turbo_type_id] }).name,
+          turbo_type_name: (turbo_types.find {|tt| tt.id == m[:turbo_type_id]}).name,
       }
     end
   end
 
   def get_model_name sku, turbo_model
-    turbo = turbo_model.find{|tm| tm.part_id == sku}
+    turbo = turbo_model.find {|tm| tm.part_id == sku}
     unless turbo.nil?
       turbo.turbo_model.name
     end
@@ -88,16 +89,16 @@ class WhereUsedBuilder
 
 
   def add_turbo_type wus
-    turbos = wus.select { |wu| is_turbo? wu }
-    turbos_ids = turbos.map { |t| t[:sku] }
+    turbos = wus.select {|wu| is_turbo? wu}
+    turbos_ids = turbos.map {|t| t[:sku]}
     turbo_model = bulk_get_turbo_with_model turbos_ids
     turbo_type_ids = bulk_get_turbo_type_id turbo_model
     turbo_types_names = bulk_get_turbo_type_name turbo_type_ids
     wus.map do |wu|
-      t_name = turbo_types_names.find { |tt| tt[:sku] == wu[:sku] }
+      t_name = turbo_types_names.find {|tt| tt[:sku] == wu[:sku]}
       unless t_name.nil?
         wu[:turboType] = t_name[:turbo_type_name]
-        wu[:turboModel]=  get_model_name(wu[:sku],turbo_model)
+        wu[:turboModel]= get_model_name(wu[:sku], turbo_model)
       end
       wu
     end
@@ -115,8 +116,8 @@ class WhereUsedBuilder
   end
 
   def get_turbos wus
-    turbos = wus.select { |wu| is_turbo?(wu) }
-    turbos = turbos.map { |t| t[:partNumber] }
+    turbos = wus.select {|wu| is_turbo?(wu)}
+    turbos = turbos.map {|t| t[:partNumber]}
     turbos.to_set
   end
 
@@ -137,21 +138,45 @@ class WhereUsedBuilder
   end
 
   def get_ids wus
-    wus.map { |w| w['partId'] }
+    wus.map {|w| w['partId']}
   end
 
-  def _build wus
+  def base_build wus
     ids = get_ids wus
-    parts = Part.where id:  ids || []
-    wus = parts.map { |p| build_where_used p }
+    parts = Part.eager_load(:part_type).where id: ids
+    parts ||= []
+  end
+
+  def component_build wus
+    parts = base_build wus
+    cartridges = parts.select {|p| p.part_type.name =="Cartridge"}
+    wus = cartridges.map {|p| build_where_used p}
+    wus_turbos = @where_used_getter.mget_cached_where_used cartridges.map {|c| c.id}
+    wus.each_with_index.map do |w, index|
+      w[:turboPartNumbers] = wus_turbos[index].values.map do |wt|
+        if wt[:partNumber].nil?
+          wt[:tiPartNumber]
+        else
+          wt[:partNumber]
+        end
+      end
+      w
+    end
+  end
+
+  def turbo_cartridge_build wus
+    parts =base_build wus
+    wus = parts.map {|p| build_where_used p}
     turbos = get_turbos(wus)
     wus = add_turbo_partnumbers wus, turbos
     add_turbo_type wus
   end
 
-  def build wus
-    unless wus.nil?
-      _build wus
+  def build wus, part_type
+    if part_type=="Turbo" or part_type=="Cartridge"
+      turbo_cartridge_build wus
+    else
+      component_build wus
     end
   end
 end

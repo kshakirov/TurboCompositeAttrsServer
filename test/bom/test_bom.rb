@@ -20,6 +20,7 @@ class TestBomAttrsReader < MiniTest::Unit::TestCase
     setter.set_bom_attribute 61643
     setter.set_bom_attribute 68157
     setter.set_bom_attribute 6583
+    setter.set_bom_attribute 63702
   end
 
   def test_bom_get
@@ -27,7 +28,7 @@ class TestBomAttrsReader < MiniTest::Unit::TestCase
     attrs = getter.get_bom_attribute 6392, 'E'
     refute_nil attrs
     assert_equal 16, attrs.size
-    assert_equal 53.76, attrs[0][:prices]
+    assert  attrs.find{|a| a[:prices]==53.76}
     part = get_part_by_sku attrs, 47753
     assert_equal 4, part[:quantity]
     attrs = getter.get_bom_attribute 840, 'E'
@@ -35,14 +36,20 @@ class TestBomAttrsReader < MiniTest::Unit::TestCase
     assert_equal 5, attrs.size
     attrs = getter.get_bom_attribute 3756, 'E'
     assert_equal 4, attrs.size
-    assert_equal 3.712, attrs[3][:prices]
-    assert_equal '49179-30220', attrs.first[:oe_part_number]
+    assert  attrs.find{|a| a[:prices]==3.712}
+    assert  attrs.find{|a| a[:oe_part_number]=='49179-30220'}
     attrs = getter.get_bom_attribute 48536, 'E'
     assert_equal 17, attrs.size
-    assert_equal '8-A-1560', attrs[6][:part_number]
+    assert  attrs.find{|a| a[:part_number]=='8-A-1560'}
     attrs = getter.get_bom_attribute 6583, 'E'
     dups = attrs.select {|b| b[:sku]==48145}
     assert_equal 2, dups.size
+    attrs = getter.get_bom_attribute 63702, 'E'
+    assert_equal 4, attrs.size
+    bom = attrs.find{|a| a[:sku]==49256}
+    ints = bom[:interchanges]
+    assert ints.find{|i| i[:id]==63381}
+    assert_equal "3-B-4955", bom[:part_number]
   end
 
 
@@ -55,6 +62,12 @@ class TestBomAttrsReader < MiniTest::Unit::TestCase
     assert boms
     dups = boms.select {|b| b["partId"]=="48145"}
     assert_equal 2, dups.size
+  end
+
+  def test_error
+    setter = BomSetter.new @redis_cache, @service_configuration
+    ids = [75305,75306,75307,75308,75329,75330,75331,75332,75333,75334,75335,75336,75337,75338,75339,75340]
+    ids.each{|id| setter.set_bom_attribute id}
   end
 
   def get_part_by_sku attrs, sku

@@ -151,7 +151,7 @@ class WhereUsedBuilder
     parts = base_build wus
     cartridges = parts.select {|p| p.part_type.name =="Cartridge"}
     wus = cartridges.map {|p| build_where_used p}
-    wus_turbos = @where_used_getter.mget_cached_where_used cartridges.map {|c| c.id}
+    wus_turbos = @where_used_getter.mget_cached_where_used cartridges.map {|c| c.id} unless wus.empty?
     wus.each_with_index.map do |w, index|
       w[:turboPartNumbers] = wus_turbos[index].values.map do |wt|
         if wt[:partNumber].nil?

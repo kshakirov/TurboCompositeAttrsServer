@@ -8,9 +8,14 @@ class SecondStageWorker
   end
 
   def set_attribute sku
+    begin
     @bom_worker.set_bom_attribute sku
     @where_worker.set_where_used_attribute sku
     @gasket_kit_setter.set_gasket_kit_attribute sku
+    rescue StandardError => se
+      puts "Sku #{sku} failed"
+      p se.message
+    end
     ActiveRecord::Base.clear_active_connections!
     "Future Finished sku [#{sku}]"
   end

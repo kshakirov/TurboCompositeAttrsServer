@@ -68,9 +68,15 @@ class BomBuilder
   end
 
   def find_all_non_ti_interchanges sku
-    interchanges = @interchanges_getter.get_cached_interchange(sku) || []
-    interchanges = interchanges.select { |i| not is_int_ti_manufacturer(i) }
-    interchanges.map { |i| {part_number: i[:part_number], sku: i[:id]} }
+    o_is = @interchanges_getter.get_cached_interchange(sku) || []
+    is = o_is.select { |i| not is_int_ti_manufacturer(i) }
+    is = is.map { |i| {part_number: i[:part_number], sku: i[:id]} }
+    tis = o_is.find_all { |i| is_int_ti_manufacturer(i) }
+    if tis and tis.size > 1
+        is + tis[1..(tis.size  - 1)]
+    else
+      is
+    end
   end
 
   def get_ti_part sku
@@ -132,7 +138,8 @@ class BomBuilder
   end
 
   def _build_bom_dto boms
-    parts = get_bom_part boms || []
+    parts = get_bom_part boms
+    parts ||= []
     boms_parts = pair_bom_and_parts boms, parts
     boms_parts = filter_out_ext_manufacturer boms_parts
     _build boms_parts

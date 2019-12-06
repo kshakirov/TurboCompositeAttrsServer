@@ -166,7 +166,7 @@ class WhereUsedBuilder
   def component_build_turbos turbos
     turbos = turbos.map { |p| build_where_used p }
     turbos.each_with_index.map do |w, index|
-      w[:turboPartNumbers] = w[:partNumber].nil? ? w[:tiPartNumber] : w[:partNumber]
+      w[:turboPartNumbers] = [w[:partNumber].nil? ? w[:tiPartNumber] : w[:partNumber]]
       w
     end
 

@@ -143,15 +143,14 @@ class WhereUsedBuilder
 
   def base_build wus
     ids = get_ids wus
-    parts = Part.eager_load(:part_type).where id: ids
+    parts = Part.eager_load(:part_type).where(id: ids,inactive: false)
     parts ||= []
   end
 
-  def component_build wus
-    parts = base_build wus
-    cartridges = parts.select {|p| p.part_type.name =="Cartridge"}
-    wus = cartridges.map {|p| build_where_used p}
-    wus_turbos = @where_used_getter.mget_cached_where_used cartridges.map {|c| c.id} unless wus.empty?
+
+  def component_build_cartridges cartridges
+    wus = cartridges.map { |p| build_where_used p }
+    wus_turbos = @where_used_getter.mget_cached_where_used cartridges.map { |c| c.id } unless wus.empty?
     wus.each_with_index.map do |w, index|
       w[:turboPartNumbers] = wus_turbos[index].values.map do |wt|
         if wt[:partNumber].nil?
@@ -162,6 +161,23 @@ class WhereUsedBuilder
       end
       w
     end
+  end
+
+  def component_build_turbos turbos
+    turbos = turbos.map { |p| build_where_used p }
+    turbos.each_with_index.map do |w, index|
+      w[:turboPartNumbers] = w[:partNumber].nil? ? w[:tiPartNumber] : w[:partNumber]
+      w
+    end
+
+  end
+
+  def component_build wus
+    parts = base_build wus
+    cartridges = parts.select { |p| p.part_type.name == "Cartridge" }
+    turbos = parts.select { |p| p.part_type.name == "Turbo" }
+    component_build_cartridges(cartridges) + component_build_turbos(turbos)
+
   end
 
   def turbo_cartridge_build wus
